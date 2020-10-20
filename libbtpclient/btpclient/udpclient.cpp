@@ -40,25 +40,28 @@ bool udpclient::send(data_ptr d, handler_fun handler)
         return;
       }
       
-      auto res = std::make_shared<data_type>();
-      res->resize(65535);
-      auto sender_endpoint = std::make_shared<udp::endpoint>();
-      _socket.async_receive_from(
-        boost::asio::buffer(res->data(),res->size()), *sender_endpoint, 
-        [res, handler, sender_endpoint, this](const boost::system::error_code& ec, std::size_t bytes_transferred)
-        {
-          if ( ec )
+      _context.post([this, handler](){
+        auto res = std::make_shared<data_type>();
+        res->resize(65535);
+        auto sender_endpoint = std::make_shared<udp::endpoint>();
+        _socket.async_receive_from(
+          boost::asio::buffer(res->data(),res->size()), *sender_endpoint, 
+          [res, handler, sender_endpoint, this](const boost::system::error_code& ec, std::size_t bytes_transferred)
           {
+            abort();
+            if ( ec )
+            {
+              if ( handler!=nullptr)
+                handler(nullptr);
+              return;
+            }
             if ( handler!=nullptr)
-              handler(nullptr);
-            return;
+            {
+              handler(std::make_unique<data_type>(std::move(*res)));
+            }
           }
-          if ( handler!=nullptr)
-          {
-            handler(std::make_unique<data_type>(std::move(*res)));
-          }
-        }
-      );
+        );
+      });
     });
   
   return true;
