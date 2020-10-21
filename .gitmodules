@@ -5,3 +5,7 @@
 	path = external/wrtstat
 	url = git@github.lan:cpp/wrtstat.git
 	branch = SUPERMODULE
+[submodule "external/phpbtp-client"]
+	path = external/phpbtp-client
+	url = git@github.lan:cpp/phpbtp-client.git
+	branch = master
