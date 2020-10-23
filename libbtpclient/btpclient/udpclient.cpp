@@ -1,71 +1,53 @@
 #include "udpclient.hpp"
+#include "logger.hpp"
 #include <fas/system/memory.hpp>
 
 namespace wamba{ namespace btp{
   
 using boost::asio::ip::udp;
   
-udpclient::udpclient(context_type& context)
-  : _context(context)
-  , _socket(context)
+udpclient::udpclient()
 {
 }
 
 bool udpclient::connect(const udpclient_options& opt)
+try
 {
+  context_type _context;
   udp::resolver resolver(_context);
-  boost::system::error_code ec;
-  _receiver_endpoint = *resolver.resolve(udp::v4(), opt.addr, opt.port, ec).begin();
-  if ( ec )
-    return false;
-  
-  _socket.open(udp::v4(), ec);
-
-  if ( ec )
-    return false;
-  
+  _receiver_endpoint = *resolver.resolve(udp::v4(), opt.addr, opt.port).begin();
   return true;
+}
+catch(const boost::system::error_code& ec)
+{
+  BTP_LOG_ERROR("udpclient::connect: " << ec.message())
+  return false;
 }
 
 bool udpclient::send(data_ptr d, handler_fun handler)
+try
 {
+  context_type _context;
+  socket_type _socket(_context);
+  _socket.open(udp::v4());
   boost::system::error_code ec;
-  _socket.async_send_to(boost::asio::buffer(d->data(),d->size()), _receiver_endpoint, 
-  [handler, this](const boost::system::error_code& ec, std::size_t bytes_transferred)
-    {
-      if ( ec )
-      {
-        if ( handler!=nullptr)
-          handler(nullptr);
-        return;
-      }
-      
-      _context.post([this, handler](){
-        auto res = std::make_shared<data_type>();
-        res->resize(65535);
-        auto sender_endpoint = std::make_shared<udp::endpoint>();
-        _socket.async_receive_from(
-          boost::asio::buffer(res->data(),res->size()), *sender_endpoint, 
-          [res, handler, sender_endpoint, this](const boost::system::error_code& ec, std::size_t bytes_transferred)
-          {
-            abort();
-            if ( ec )
-            {
-              if ( handler!=nullptr)
-                handler(nullptr);
-              return;
-            }
-            if ( handler!=nullptr)
-            {
-              handler(std::make_unique<data_type>(std::move(*res)));
-            }
-          }
-        );
-      });
-    });
-  
+  _socket.send_to(boost::asio::buffer(d->data(),d->size()), _receiver_endpoint);
+  if ( handler != nullptr )
+  {
+    auto res = std::make_unique<data_type>();
+    res->resize(65535);
+    udp::endpoint sender_endpoint;
+    size_t bytes_transferred = 
+      _socket.receive_from(boost::asio::buffer(res->data(),res->size()), sender_endpoint);
+    res->resize(bytes_transferred);
+    handler( std::move(res) );
+  }
   return true;
 }
+catch(const boost::system::error_code& ec)
+{
+  BTP_LOG_ERROR("udpclient::send: " << ec.message())
+  return false;
+}
 
-  
 }}

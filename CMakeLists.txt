@@ -6,6 +6,7 @@ set(CMAKE_CXX_COMPILER /usr/bin/g++-9 CACHE STRING "Compiler" FORCE)
 
 include(cmake/ci.cmake)
 wci_getlib(NAME wrtstat SUPERMODULE)
+wci_getlib(NAME wlog)
 
 add_library(phpbtp-client main.cpp btp_push.cpp)
 
