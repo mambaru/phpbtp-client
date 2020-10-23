@@ -4,8 +4,6 @@
 [submodule "external/wrtstat"]
 	path = external/wrtstat
 	url = git@github.lan:cpp/wrtstat.git
-	branch = SUPERMODULE
 [submodule "external/wlog"]
 	path = external/wlog
 	url = git@github.lan:cpp/wlog.git
-	branch = master

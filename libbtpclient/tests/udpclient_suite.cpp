@@ -15,10 +15,9 @@ UNIT(udpclient1, "")
   using namespace fas::testing;
   using namespace wamba::btp;
   using namespace wjson::literals;
-  
+
   udpclient_options opt;
   opt.addr = addr;
-  //opt.addr = "0.0.0.0";
   opt.port = "38001";
   udpclient cli;
   t << is_true<expect>( cli.connect(opt) ) << FAS_FL;

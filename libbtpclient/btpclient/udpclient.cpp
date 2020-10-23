@@ -3,9 +3,9 @@
 #include <fas/system/memory.hpp>
 
 namespace wamba{ namespace btp{
-  
+
 using boost::asio::ip::udp;
-  
+
 udpclient::udpclient()
 {
 }
