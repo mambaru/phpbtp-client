@@ -10,8 +10,6 @@ namespace
 
 btpclient::btpclient(const btpclient_options& opt)
   : _opt(opt)
-/*  , _packer(nullptr)
-  , _gateway(nullptr)*/
 {
   using namespace std::placeholders;
   _opt.stat.handler = std::bind(&btpclient::stat_handler_, this, _1, _2);
@@ -21,7 +19,13 @@ btpclient::btpclient(const btpclient_options& opt)
   _size_packer = std::make_shared<packer_type>(opt.packer, std::bind(&btpclient::push_handler_, this, false, _1) );
 }
 
-btpclient::id_t btpclient::create_meter(
+void btpclient::init_id(id_t start, id_t step)
+{
+  _id_count = start;
+  _id_step = step;
+}
+
+id_t btpclient::create_meter(
   const std::string& script,
   const std::string& service, 
   const std::string& server, 
@@ -43,7 +47,8 @@ btpclient::id_t btpclient::create_meter(
     itr = _wrtstat_map.insert(std::make_pair(statkey, pwrtstat) ).first;
   }
   
-  id_t cur_id  = ++_id_count;
+  _id_count += _id_step;
+  id_t cur_id = _id_count;
   
   auto meter = itr->second->create_composite_multi_meter<std::chrono::microseconds>( 
     op, op + ":write" + size_suffix, op + ":read" + size_suffix, true);

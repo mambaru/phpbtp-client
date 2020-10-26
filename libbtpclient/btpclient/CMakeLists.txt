@@ -4,6 +4,7 @@ add_library(
     udpclient.cpp
     btpgateway.cpp
     btpclient.cpp
+    btpsharding.cpp
 )
 find_package(Boost REQUIRED COMPONENTS system)
 target_include_directories(btpclient PUBLIC ${libbtpclient_SOURCE_DIR})

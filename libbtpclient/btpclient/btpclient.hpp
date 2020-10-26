@@ -4,6 +4,7 @@
 #include <wrtstat/multi_packer/basic_packer.hpp>
 #include <btpclient/btpclient_options.hpp>
 #include <btpclient/btpgateway.hpp>
+#include <btpclient/types.hpp>
 
 namespace wamba{ namespace btp{
   
@@ -15,13 +16,14 @@ public:
   typedef std::shared_ptr<btpgateway> btpgateway_ptr;
   typedef wrtstat::basic_packer packer_type;
   typedef std::shared_ptr<packer_type> packer_ptr;
-  typedef wrtstat::id_t id_t;
   typedef std::chrono::microseconds duration_type;
   typedef wrtstat::multi_point< wrtstat::composite_point<duration_type> > point_type; 
   typedef std::shared_ptr<point_type> point_ptr;
   typedef std::map<id_t, point_ptr> points_map_t;
   
   btpclient(const btpclient_options& opt);
+  
+  void init_id(id_t start, id_t step);
   
   id_t create_meter(
     const std::string& script,
@@ -48,6 +50,7 @@ private:
   btpgateway_ptr _time_gateway;
   btpgateway_ptr _size_gateway;
   id_t _id_count = 0;
+  id_t _id_step = 1;
   wrtstat_map_t _wrtstat_map;
   points_map_t _points_map;
 };
