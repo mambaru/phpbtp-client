@@ -18,7 +18,7 @@
 #	are automatically generated
 #
 
-NAME				=	btp-pusher
+NAME				=	btpphp-client
 
 
 #
@@ -87,8 +87,9 @@ LINKER				=	g++-9
 
 COMPILER_FLAGS		=	-I../libbtpclient -Wall -c -O2 -std=c++11 -fpic -o
 LINKER_FLAGS		=	-shared
-LINKER_DEPENDENCIES	=	-lphpcpp ../build/archive/libbtpclient.a ../build/archive/libwrtstat.a ../build/archive/libwlog.a
+#LINKER_DEPENDENCIES	=	-lphpcpp ../build/archive/libbtpclient.a ../build/archive/libwrtstat.a ../build/archive/libwlog.a
 
+LINKER_DEPENDENCIES	=	../build/PHP-CPP/libphpcpp.a.2.2.0 ../build/archive/libbtpclient.a ../build/archive/libwrtstat.a ../build/archive/libwlog.a
 
 #
 #	Command to remove files, copy files and create directories.
