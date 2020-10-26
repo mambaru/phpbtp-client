@@ -6,6 +6,8 @@
 .cproject
 .project
 *.o
+*.so
+*.a
 */debug
 */release
 */build

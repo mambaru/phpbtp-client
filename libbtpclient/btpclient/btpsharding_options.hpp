@@ -19,7 +19,13 @@ enum class shard_feature: int
 struct btpsharding_options
 {
   std::vector<btpshard_options> shards;
-  shard_feature shard_features = shard_feature::all;
+  int shard_features = int(shard_feature::all);
+  
+  static bool create_schema(btpsharding_options& opt, const std::string&)
+  {
+    opt.shards.resize(1);
+    return true;
+  }
 };
   
 }}

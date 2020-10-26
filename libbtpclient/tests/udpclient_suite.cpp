@@ -81,7 +81,7 @@ UNIT(btpclient1, "")
   std::vector<std::string> servers = {"server1", "server2", "server3"};
   std::vector<std::string> ops = {"op1", "op2", "op3"};
   btpclient cli(opt);
-  for (int i=0 ; i < COUNT ; ++i)
+  for (size_t i=0 ; i < COUNT ; ++i)
   {
     auto id = cli.create_meter(
       scripts[std::rand()%4], 
@@ -149,6 +149,29 @@ UNIT(btpsharding1, "")
   t << equal<assert, size_t>( 269, calls.at(1) ) << FAS_FL;
   t << equal<assert, size_t>( 556, calls.at(2) ) << FAS_FL;
   t << equal<assert, size_t>( 19, calls.at(3) ) << FAS_FL;
+
+  std::vector<std::string> scripts = {"", "script1.1", "script2.1", "script3.1"};
+  std::vector<std::string> services = {"service1.1", "service2.1", "service3.1"};
+  std::vector<std::string> servers = {"server1.1", "server2.1", "server3.1"};
+  std::vector<std::string> ops = {"op1.1", "op2.1", "op3.1"};
+ 
+  for (size_t i=0 ; i < COUNT ; ++i)
+  {
+    auto id = cli.create_meter(
+      scripts[std::rand()%4], 
+                               services[std::rand()%3],
+                               servers[std::rand()%3],
+                               ops[std::rand()%3], 
+                               1, std::rand()%100
+    );
+    t << message("push... ") << i << " " << id;
+    std::this_thread::sleep_for(std::chrono::milliseconds(20));
+    t << is_true<assert>( cli.release_meter(id, std::rand()%100) ) << FAS_FL;
+  }
+  size_t push_count = cli.pushout();
+  t << message("pushout... ") << push_count;
+  ;
+  
 }
 
 } // namespace

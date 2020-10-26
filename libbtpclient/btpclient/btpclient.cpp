@@ -74,13 +74,21 @@ void btpclient::stat_handler_(const std::string& name, wrtstat::aggregated_data:
   bool is_time = true;
   if ( name.size() > suffix_len )
   {
-    is_time = name.substr( name.size() - suffix_len) == size_suffix;
+    is_time = name.substr( name.size() - suffix_len) != size_suffix;
   }
   
   if ( is_time )
     _time_packer->push(name, std::move(ag));
   else
-    _size_packer->push( name, std::move(ag));
+  {
+    // Нули не пропускаем
+    if ( ag->count!=0 || ag->max!=0 )
+    {
+      std::string sname = name;
+      sname.resize(name.size() - suffix_len);
+      _size_packer->push( sname, std::move(ag));
+    }
+  }
 }
 
 size_t btpclient::pushout()

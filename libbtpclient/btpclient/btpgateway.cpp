@@ -23,8 +23,8 @@ namespace
   template<typename J>
   struct push_result_json_t
   {
-    JSON_NAME(result);
-    JSON_NAME(error);
+    JSON_NAME(result)
+    JSON_NAME(error)
     
     typedef wjson::pointer<push_result::response_ptr, J> ptr_json;
     typedef wjson::object<
@@ -53,8 +53,8 @@ namespace
   template<typename J>
   struct multi_push_result_json_t
   {
-    JSON_NAME(result);
-    JSON_NAME(error);
+    JSON_NAME(result)
+    JSON_NAME(error)
     
     typedef wjson::pointer<multi_push_result::response_ptr, J> ptr_json;
     typedef wjson::object<

@@ -3,6 +3,12 @@
 #include <phpcpp/visibility.h>
 #include <phpcpp.h>
 
+Php::Value btp_configure(Php::Parameters&);
+Php::Value btp_create_meter(Php::Parameters&);
+Php::Value btp_release_meter(Php::Parameters&);
+Php::Value btp_pushout(Php::Parameters&);
+
+/*
 Php::Value btp_config_server_pool(Php::Parameters&);
 Php::Value btp_script_name_set(Php::Parameters&);
 
@@ -16,3 +22,4 @@ Php::Value btp_flush(Php::Parameters&);
 Php::Value btp_timer_count(Php::Parameters&);
 Php::Value btp_timer_count_script(Php::Parameters&);
 Php::Value btp_timer_set_operation(Php::Parameters&);
+*/
