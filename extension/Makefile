@@ -20,6 +20,10 @@
 
 NAME				=	phpbtp-client
 
+ifndef BLDDIR
+  BLDDIR		=	../build
+endif
+
 
 #
 #	Php.ini directories
@@ -85,11 +89,9 @@ LINKER				=	g++
 #	with a list of all flags that should be passed to the linker.
 #
 
-COMPILER_FLAGS		=	-I../libbtpclient -I../build/PHP-CPP/include -Wall -c -O2 -std=c++11 -fpic -o
+COMPILER_FLAGS		=	-I../libbtpclient -I${BLDDIR}/PHP-CPP/include -Wall -c -O2 -std=c++11 -fpic -o
 LINKER_FLAGS		=	-shared
-#LINKER_DEPENDENCIES	=	-lphpcpp ../build/archive/libbtpclient.a ../build/archive/libwrtstat.a ../build/archive/libwlog.a
-
-LINKER_DEPENDENCIES	=	../build/PHP-CPP/libphpcpp.a.2.2.0 ../build/archive/libbtpclient.a ../build/archive/libwrtstat.a ../build/archive/libwlog.a
+LINKER_DEPENDENCIES	=	${BLDDIR}/PHP-CPP/libphpcpp.a.2.2.0 ${BLDDIR}/archive/libbtpclient.a ${BLDDIR}/archive/libwrtstat.a ${BLDDIR}/archive/libwlog.a
 
 #
 #	Command to remove files, copy files and create directories.

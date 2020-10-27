@@ -15,7 +15,7 @@ add_custom_command(
 )
 
 add_custom_command(
-  COMMAND make && export DESTDIR="${CMAKE_BINARY_DIR}/PHP-CPP" && make install 
+  COMMAND make && DESTDIR="${CMAKE_BINARY_DIR}/PHP-CPP" make install 
   WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/PHP-CPP
   DEPENDS PHP-CPP
   OUTPUT libphpcpp.a.2.2.0
@@ -26,7 +26,7 @@ wci_remove_options(-Wzero-as-null-pointer-constant)
 add_subdirectory(libbtpclient)
 
 add_custom_command(
-  COMMAND make
+  COMMAND BLDDIR=${CMAKE_BINARY_DIR} make
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/extension/
   DEPENDS btpclient libphpcpp.a.2.2.0
   OUTPUT phpbtp-client.so
