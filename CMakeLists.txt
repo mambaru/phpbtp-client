@@ -15,7 +15,7 @@ add_custom_command(
 )
 
 add_custom_command(
-  COMMAND make && DESTDIR="${CMAKE_BINARY_DIR}/PHP-CPP" make install 
+  COMMAND make && export DESTDIR="${CMAKE_BINARY_DIR}/PHP-CPP" && make install 
   WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/PHP-CPP
   DEPENDS PHP-CPP
   OUTPUT libphpcpp.a.2.2.0
