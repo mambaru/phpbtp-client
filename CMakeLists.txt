@@ -40,8 +40,11 @@ add_custom_command(
 )
 
 add_custom_command(
-  COMMAND cp ../extension/phpbtp-client.so ./bin/
-  WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+  COMMAND cp ./extension/phpbtp-client.so ${CMAKE_BINARY_DIR}/bin/
+  COMMAND cp ./extension/phpbtp-client.conf ${CMAKE_BINARY_DIR}/bin/
+  COMMAND cp ./extension/phpbtp-client.ini ${CMAKE_BINARY_DIR}/bin/
+  COMMAND cp ./extension/Makefile-install ${CMAKE_BINARY_DIR}/bin/Makefile
+  WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
   DEPENDS phpbtp-client.so ${CMAKE_BINARY_DIR}/bin
   OUTPUT ${CMAKE_BINARY_DIR}/bin/phpbtp-client.so
 )

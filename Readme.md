@@ -1,19 +1,6 @@
-# php-btp-pusher
+# phpbtp-clinet
 
-Extension для PHP на C++, которое отправляет метрики в BTP по UDP оптимизируя исходящий трафик.
+Основная документация [phpbtp-clinet](http://github.lan/cpp/docs/blob/master/phpbtp-clinet/Readme.md)
 
-Перед компиляцией нужно установить PHP-CPP
-```bash
- git clone https://github.com/CopernicaMarketingSoftware/PHP-CPP.git
- cd PHP-CPP
- make
- sudo make install
-```
-
-Компиляцию и установку как расширения PHP нужно производить из папки deploy проекта: 
-```bash
- cd deploy
- make
- sudo make install
-```
+[Сборка проекта](http://github.lan/cpp/docs/blob/master/phpbtp-clinet/Build.md)
 
