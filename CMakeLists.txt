@@ -14,6 +14,8 @@ endif()
 
 execute_process(COMMAND make -j6 WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/PHP-CPP)
 
+wci_remove_options(-Wzero-as-null-pointer-constant)
+
 add_subdirectory(libbtpclient)
 
 add_custom_command(
