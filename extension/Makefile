@@ -85,7 +85,7 @@ LINKER				=	g++
 #	with a list of all flags that should be passed to the linker.
 #
 
-COMPILER_FLAGS		=	-I../libbtpclient -Wall -c -O2 -std=c++11 -fpic -o
+COMPILER_FLAGS		=	-I../libbtpclient -I../build/PHP-CPP/include -Wall -c -O2 -std=c++11 -fpic -o
 LINKER_FLAGS		=	-shared
 #LINKER_DEPENDENCIES	=	-lphpcpp ../build/archive/libbtpclient.a ../build/archive/libwrtstat.a ../build/archive/libwlog.a
 
