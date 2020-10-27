@@ -18,7 +18,7 @@ public:
   typedef std::vector<index_client_t> client_list_t;
   typedef std::mutex mutex_type;
   
-  btpsharding(const btpsharding_options& opt);
+  explicit btpsharding(const btpsharding_options& opt);
   
   virtual ~btpsharding();
   

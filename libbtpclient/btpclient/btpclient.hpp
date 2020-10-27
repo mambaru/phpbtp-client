@@ -21,7 +21,7 @@ public:
   typedef std::shared_ptr<point_type> point_ptr;
   typedef std::map<id_t, point_ptr> points_map_t;
   
-  btpclient(const btpclient_options& opt);
+  explicit btpclient(const btpclient_options& opt);
   
   void init_id(id_t start, id_t step);
   
@@ -40,7 +40,7 @@ public:
   
   
 private:
-  void stat_handler_(const std::string& name, wrtstat::aggregated_data::ptr agg);
+  void stat_handler_(const std::string& name, wrtstat::aggregated_data::ptr ag);
   void push_handler_(bool is_time, wrtstat::request::multi_push::ptr req);
   
 private:
