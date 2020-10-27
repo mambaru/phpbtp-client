@@ -1,6 +1,6 @@
 <?php
 
-btp_configure("/monamour/btpclient.conf");
+btp_configure("/etc/php7/conf.d/phpbtp-client.conf");
 $id=btp_create_meter("phpscript1","phpservice1","phpserver1","op1", 1, 0);
 print "id=$id\n";
 btp_release_meter($id, 0);

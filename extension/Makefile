@@ -18,7 +18,7 @@
 #	are automatically generated
 #
 
-NAME				=	btpphp-client
+NAME				=	phpbtp-client
 
 
 #
@@ -65,8 +65,8 @@ INI 				=	${NAME}.ini
 #	library file. By default, g++ (the GNU C++ compiler) is used for both.
 #
 
-COMPILER			=	g++-9
-LINKER				=	g++-9
+COMPILER			=	g++
+LINKER				=	g++
 
 
 #

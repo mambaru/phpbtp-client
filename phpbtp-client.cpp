@@ -1,5 +1,5 @@
 #include <btpclient/btpglobal.hpp>
-#include "btp_push.hpp"
+#include "phpbtp-client.hpp"
 #include <string>
 
 Php::Value btp_configure(Php::Parameters& params)

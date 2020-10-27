@@ -16,7 +16,7 @@ variables:
   PUSH_TO_GITHUB: "OFF"
 
   # создать сборку для деплоя в папке /monamour сборочного сервера
-  MAKE_ASSEMBLY: "OFF"
+  MAKE_ASSEMBLY: "ON"
 
   # уменьшите это значение если сборка тяжеловесная (падает по памяти)
   BUILD_THREADS: 4

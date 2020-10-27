@@ -1,5 +1,5 @@
 #include <phpcpp.h>
-#include "btp_push.hpp"
+#include "phpbtp-client.hpp"
 /**
  *  tell the compiler that the get_module is a pure C function
  */
