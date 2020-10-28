@@ -27,7 +27,7 @@ UNIT(udpclient1, "")
   t << message("send: ") << json;
   t << flush;
   
-  for(int i=0; i < COUNT; ++i)
+  for(size_t i=0; i < COUNT; ++i)
   {
     cli.send( std::make_unique< udpclient::data_type>(json.begin(), json.end()), nullptr);
     t << message("poll... ") << i;
@@ -49,7 +49,7 @@ UNIT(btpgateway1, "")
   opt.addr = addr;
   opt.port = "38001";
   btpgateway cli(false, opt);
-  for(int i=0; i < COUNT; ++i)
+  for(size_t i=0; i < COUNT; ++i)
   {
     auto req=std::make_unique<request::push>();
     req->name = "service~~name1~~name5~~name6";
