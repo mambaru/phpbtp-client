@@ -5,8 +5,8 @@ namespace wamba{ namespace btp{
 
 struct udpclient_options_json
 {
-  JSON_NAME(addr);
-  JSON_NAME(port);
+  JSON_NAME(addr)
+  JSON_NAME(port)
   
   typedef wjson::object<
     udpclient_options,

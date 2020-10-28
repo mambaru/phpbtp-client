@@ -1,7 +1,10 @@
 #include "btpglobal.hpp"
 #include "btpsharding.hpp"
+#include "btpsharding_options_json.hpp"
 #include <atomic>
 #include <mutex>
+#include <fstream>
+#include <stdexcept>
 
 namespace {
 class btp_global
@@ -55,8 +58,20 @@ std::mutex btp_global::_s_mutex;
 
 namespace wamba{ namespace btp{
   
-void configure(const std::string& /*path*/)
+void configure(const std::string& path)
 {
+  std::ifstream ifs(path);
+  typedef std::istreambuf_iterator<char> iterator;
+  wamba::btp::btpsharding_options opt;
+  std::string json((iterator(ifs)), iterator());
+  if ( json.empty() )
+    throw std::domain_error("Bad configuration file " + path);
+  wjson::json_error er;
+  btpsharding_options_json::serializer()(opt, json.begin(), json.end(), &er);
+  if ( er )
+    throw std::domain_error(wjson::strerror::message_trace(er, json.begin(), json.end()));
+  btp_global::instance()->initialize(opt);
+  /*
   wamba::btp::btpshard_options opt;
   opt.time_client.addr = "dd2";
   opt.time_client.port = "38001";
@@ -76,6 +91,7 @@ void configure(const std::string& /*path*/)
   opts.shards.push_back(opt);
   opts.shards.back().shard_weight = 1;
   btp_global::instance()->initialize(opts);
+  */
 }
 
 
@@ -91,7 +107,8 @@ btp_id_t create_meter(
   {
     return cli->create_meter(script, service, server, op, count, write_size);
   }
-  return 0;
+  
+  throw std::domain_error("Extension phpbtp-client is not configured");
 }
 
 bool release_meter(btp_id_t id, size_t read_size)
@@ -100,7 +117,7 @@ bool release_meter(btp_id_t id, size_t read_size)
   {
     return cli->release_meter(id, read_size);
   }
-  return false;
+  throw std::domain_error("Extension phpbtp-client is not configured");
 }
 
 size_t pushout()
@@ -109,6 +126,7 @@ size_t pushout()
   {
     return cli->pushout();
   }
-  return 0;
+  throw std::domain_error("Extension phpbtp-client is not configured");
 }
+
 }}

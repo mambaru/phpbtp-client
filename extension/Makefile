@@ -57,6 +57,7 @@ EXTENSION_DIR		=	$(shell php-config --extension-dir)
 
 EXTENSION 			=	${NAME}.so
 INI 				=	${NAME}.ini
+CONF				=	${NAME}.conf
 
 
 #
@@ -132,6 +133,7 @@ ${OBJECTS}:
 install:		
 						${CP} ${EXTENSION} ${EXTENSION_DIR}
 						${CP} ${INI} ${INI_DIR}
+						${CP} ${CONF} ${INI_DIR}
 				
 clean:
 						${RM} ${EXTENSION} ${OBJECTS}

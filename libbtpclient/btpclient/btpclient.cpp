@@ -38,8 +38,11 @@ id_t btpclient::create_meter(
   if ( itr == _wrtstat_map.end() )
   {
     wrtstat::wrtstat_options opt = _opt.stat;
-    opt.prefixes.push_back("service~~" + service + "~~" + server + "~~");
-    opt.prefixes.push_back("service~~" + service + "~~");
+    if ( !service.empty() )
+    {
+      opt.prefixes.push_back("service~~" + service + "~~" + server + "~~");
+      opt.prefixes.push_back("service~~" + service + "~~");
+    }
     if ( !script.empty() )
       opt.prefixes.push_back("script~~" + script + "~~" + service + "~~" );
   

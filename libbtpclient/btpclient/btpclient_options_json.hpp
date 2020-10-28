@@ -28,7 +28,7 @@ struct btpclient_options_json
   typedef type::target target;
   
   static std::vector<std::string> get_scheama_list() { return {"devel", "productions"};}
-  bool create_schema(btpclient_options& opt, const std::string& name)
+  bool create_schema(btpclient_options& , const std::string& )
   {
     return true;
   }
