@@ -127,7 +127,7 @@ size_t btpsharding::shard_index_(const std::string& shard_name) const
       return left.first < right.first;
     }
   );
-  return std::distance(std::begin(_client_list), itr);
+  return static_cast<size_t>( std::distance(std::begin(_client_list), itr) );
 }
 
 size_t btpsharding::get_shard_index(const std::string& name) const

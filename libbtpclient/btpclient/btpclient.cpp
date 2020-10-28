@@ -53,7 +53,7 @@ id_t btpclient::create_meter(
   auto meter = itr->second->create_composite_multi_meter<std::chrono::microseconds>( 
     op, op + ":write" + size_suffix, op + ":read" + size_suffix, true);
   
-  auto p = meter.create_shared(count, 0, write_size);
+  auto p = meter.create_shared(count, static_cast<wrtstat::value_type>(0), static_cast<wrtstat::value_type>(write_size) );
   _points_map.insert(std::make_pair(cur_id, p) );
   return cur_id;
 }
@@ -63,7 +63,7 @@ bool btpclient::release_meter(id_t id, size_t read_size )
   auto itr = _points_map.find(id);
   if (itr == _points_map.end() )
     return false;
-  itr->second->set_read_size(read_size);
+  itr->second->set_read_size( static_cast<wrtstat::value_type>(read_size));
   _points_map.erase(itr);
   return true;
 }
