@@ -71,27 +71,6 @@ void configure(const std::string& path)
   if ( er )
     throw std::domain_error(wjson::strerror::message_trace(er, json.begin(), json.end()));
   btp_global::instance()->initialize(opt);
-  /*
-  wamba::btp::btpshard_options opt;
-  opt.time_client.addr = "dd2";
-  opt.time_client.port = "38001";
-  opt.size_client.addr = "dd2";
-  opt.size_client.port = "38001";
-  opt.stat.aggregation_step_ts = 1000000;
-  opt.stat.resolution = wrtstat::resolutions::microseconds;
-  opt.packer.json_limit=1024;
-  
-  wamba::btp::btpsharding_options opts;
-  opts.shards.push_back(opt);
-  opts.shards.back().shard_weight = 10;
-  opts.shards.push_back(opt);
-  opts.shards.back().shard_weight = 15;
-  opts.shards.push_back(opt);
-  opts.shards.back().shard_weight = 33;
-  opts.shards.push_back(opt);
-  opts.shards.back().shard_weight = 1;
-  btp_global::instance()->initialize(opts);
-  */
 }
 
 
@@ -127,6 +106,29 @@ size_t pushout()
     return cli->pushout();
   }
   throw std::domain_error("Extension phpbtp-client is not configured");
+}
+
+bool add_time(const std::string& script, const std::string& service, const std::string& server, const std::string& op, 
+              time_t ts, size_t count)
+{
+  if ( auto cli = btp_global::instance()->get() )
+  {
+    return cli->add_time(script, service, server, op, ts, count);
+  }
+  
+  throw std::domain_error("Extension phpbtp-client is not configured");  
+}
+
+bool add_size(const std::string& script, const std::string& service, const std::string& server, const std::string& op, 
+              size_t size, size_t count)
+{
+  if ( auto cli = btp_global::instance()->get() )
+  {
+    return cli->add_size(script, service, server, op, size, count);
+  }
+  
+  throw std::domain_error("Extension phpbtp-client is not configured");  
+  
 }
 
 }}

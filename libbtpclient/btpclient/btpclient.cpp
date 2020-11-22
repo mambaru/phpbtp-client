@@ -33,6 +33,45 @@ id_t btpclient::create_meter(
   size_t count,
   size_t write_size)
 {
+  auto pwrtstat = get_or_cre_(script, service, server);
+  
+  _id_count += _id_step;
+  id_t cur_id = _id_count;
+  
+  auto meter = pwrtstat->create_composite_multi_meter<std::chrono::microseconds>( 
+    op, op + ":write" + size_suffix, op + ":read" + size_suffix, true);
+  
+  auto p = meter.create_shared(count, static_cast<wrtstat::value_type>(0), static_cast<wrtstat::value_type>(write_size) );
+  _points.composite.insert(std::make_pair(cur_id, p) );
+  return cur_id;
+}
+
+bool btpclient::release_meter(id_t id, size_t read_size )
+{
+  return _points.release_meter(id, read_size);
+}
+
+bool btpclient::add_time(const std::string& script, const std::string& service, const std::string& server, const std::string& op, 
+                         time_t ts, size_t count)
+{
+  auto pwrtstat = get_or_cre_(script, service, server);
+  auto meter = pwrtstat->create_value_multi_meter(op);
+  meter.create(ts, count);
+  return true;
+}
+
+bool btpclient::add_size(const std::string& script, const std::string& service, const std::string& server, const std::string& op, 
+                         size_t size, size_t count)
+{
+  auto pwrtstat = get_or_cre_(script, service, server);
+  auto meter = pwrtstat->create_value_multi_meter(op + size_suffix);
+  meter.create(size, count);
+  return true;
+}
+
+
+btpclient::wrtstat_ptr btpclient::get_or_cre_(const std::string& script, const std::string& service, const std::string& server)
+{
   std::string statkey = script + "." + service + "." + server;
   auto itr = _wrtstat_map.find(statkey);
   if ( itr == _wrtstat_map.end() )
@@ -45,31 +84,13 @@ id_t btpclient::create_meter(
     }
     if ( !script.empty() )
       opt.prefixes.push_back("script~~" + script + "~~" + service + "~~" );
-  
+    
     auto pwrtstat = std::make_shared<wrtstat::wrtstat>(opt);
     itr = _wrtstat_map.insert(std::make_pair(statkey, pwrtstat) ).first;
   }
-  
-  _id_count += _id_step;
-  id_t cur_id = _id_count;
-  
-  auto meter = itr->second->create_composite_multi_meter<std::chrono::microseconds>( 
-    op, op + ":write" + size_suffix, op + ":read" + size_suffix, true);
-  
-  auto p = meter.create_shared(count, static_cast<wrtstat::value_type>(0), static_cast<wrtstat::value_type>(write_size) );
-  _points_map.insert(std::make_pair(cur_id, p) );
-  return cur_id;
+  return itr->second;
 }
 
-bool btpclient::release_meter(id_t id, size_t read_size )
-{
-  auto itr = _points_map.find(id);
-  if (itr == _points_map.end() )
-    return false;
-  itr->second->set_read_size( static_cast<wrtstat::value_type>(read_size));
-  _points_map.erase(itr);
-  return true;
-}
 
 void btpclient::stat_handler_(const std::string& name, wrtstat::aggregated_data::ptr ag)
 {

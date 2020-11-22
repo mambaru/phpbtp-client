@@ -22,6 +22,9 @@ extern "C" {
         extension.add<btp_create_meter>("btp_create_meter", {});
         extension.add<btp_release_meter>("btp_release_meter", {});
         extension.add<btp_pushout>("btp_pushout", {});
+        extension.add<btp_add_time>("btp_add_time", {});
+        extension.add<btp_add_time>("btp_add_size", {});
+        
         
         // @todo    add your own functions, classes, namespaces to the extension
         /*

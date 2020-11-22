@@ -37,6 +37,11 @@ public:
   std::vector<size_t> get_shard_vals() const;
   
   size_t get_shard_index(const std::string& name) const;
+
+  bool add_time(const std::string& script, const std::string& service, const std::string& server, const std::string& op, 
+                time_t ts, size_t count);
+  bool add_size(const std::string& script, const std::string& service, const std::string& server, const std::string& op, 
+                size_t size, size_t count);
 private:
   std::string shard_name_(const std::string& script, const std::string& service, const std::string& server, const std::string& op) const;
   size_t shard_index_(const std::string& shard_name) const;

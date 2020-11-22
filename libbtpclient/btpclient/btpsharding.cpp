@@ -65,6 +65,34 @@ id_t btpsharding::create_meter(
   return cli->create_meter(script, service, server, op, count, write_size);
 }
 
+bool btpsharding::add_time(const std::string& script, const std::string& service, const std::string& server, const std::string& op, 
+              time_t ts, size_t count)
+{
+  std::lock_guard<mutex_type> lk(_mutex);
+  
+  if ( _client_list.empty() )
+    return 0;
+  
+  std::string shard_name = this->shard_name_(script, service, server, op);
+  size_t index = this->shard_index_(shard_name);
+  auto cli = _client_list.at(index).second;
+  return cli->add_time(script, service, server, op, ts, count);  
+}
+
+bool btpsharding::add_size(const std::string& script, const std::string& service, const std::string& server, const std::string& op, 
+                           size_t size, size_t count)
+{
+  std::lock_guard<mutex_type> lk(_mutex);
+  
+  if ( _client_list.empty() )
+    return 0;
+  
+  std::string shard_name = this->shard_name_(script, service, server, op);
+  size_t index = this->shard_index_(shard_name);
+  auto cli = _client_list.at(index).second;
+  return cli->add_size(script, service, server, op, size, count);  
+}
+
 bool btpsharding::release_meter(id_t id, size_t read_size )
 {
   std::lock_guard<mutex_type> lk(_mutex);
