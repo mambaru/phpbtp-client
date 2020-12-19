@@ -1,7 +1,7 @@
 #include "btpsharding.hpp"
 #include "btpclient.hpp"
 #include <cstring>
-
+#include <iostream>
 namespace wamba{ namespace btp{
 
 namespace{
@@ -65,6 +65,16 @@ id_t btpsharding::create_meter(
   return cli->create_meter(script, service, server, op, count, write_size);
 }
 
+id_t btpsharding::create_meter(
+  size_t count,
+  size_t write_size)
+{
+  std::lock_guard<mutex_type> lk(_mutex);
+  std::cout << count << " " << write_size << std::endl;
+  abort();
+  return -1;
+}
+
 bool btpsharding::add_time(const std::string& script, const std::string& service, const std::string& server, const std::string& op, 
               time_t ts, size_t count)
 {
@@ -101,6 +111,21 @@ bool btpsharding::release_meter(id_t id, size_t read_size )
     return false;
   auto cli = _client_list.at( id % _client_list.size() ).second;
   return cli->release_meter( id, read_size );
+}
+
+bool btpsharding::release_meter(
+  id_t id, 
+  const std::string& script,
+  const std::string& service, 
+  const std::string& server, 
+  const std::string& op,
+  size_t read_size )
+{
+  std::lock_guard<mutex_type> lk(_mutex);
+  std::cout << id << " "  << script << " " <<  service << " " <<  server << " " << op << read_size << std::endl;
+  abort();
+  
+  return false;
 }
 
 size_t btpsharding::pushout()

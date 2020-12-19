@@ -114,6 +114,10 @@ UNIT(btpsharding1, "")
   opt.stat.aggregation_step_ts = 1000000;
   opt.stat.resolution = resolutions::microseconds;
   opt.packer.json_limit=1024;
+  opt.time_client.test = [&t](udpclient_options::data_ptr d)
+  {
+    t << message("TIME TEST:") << std::string( d->begin(), d->end() ) << FAS_FL;
+  };
 
   btpsharding_options opts;
   opts.shards.push_back(opt);
@@ -174,11 +178,94 @@ UNIT(btpsharding1, "")
   
 }
 
+UNIT(btpsharding2, "")
+{
+  using namespace fas::testing;
+  using namespace wamba::btp;
+  using namespace wrtstat;
+  using namespace wjson::literals;
+  
+  btpshard_options opt;
+  opt.time_client.addr = addr;
+  opt.time_client.port = "38001";
+  opt.size_client.addr = addr;
+  opt.size_client.port = "38001";
+  opt.stat.aggregation_step_ts = 1000000;
+  opt.stat.resolution = resolutions::microseconds;
+  opt.packer.json_limit=1024;
+  opt.time_client.test = [&t](udpclient_options::data_ptr d)
+  {
+    t << message("TIME TEST:") << std::string( d->begin(), d->end() ) << FAS_FL;
+  };
+  
+  btpsharding_options opts;
+  opts.shards.push_back(opt);
+  opts.shards.back().shard_weight = 10;
+  opts.shards.push_back(opt);
+  opts.shards.back().shard_weight = 15;
+  opts.shards.push_back(opt);
+  opts.shards.back().shard_weight = 33;
+  opts.shards.push_back(opt);
+  opts.shards.back().shard_weight = 1;
+  
+  btpsharding cli(opts);
+  auto shards = cli.get_shard_vals();
+  t << equal<assert, size_t>( 4, shards.size() ) << FAS_FL;
+  for (size_t i = 0; i < shards.size(); ++i)
+  {
+    t << message("shard ") << opts.shards[i].shard_weight << " : " << shards[i];
+  }
+  
+  std::map<size_t, size_t> calls;
+  for (size_t i = 0; i < 1000 ; ++i)
+    calls[cli.get_shard_index(std::to_string(i))]+=1;
+  
+  t << equal<assert, size_t>( 4, calls.size() ) << FAS_FL;
+  size_t summcall = 0;
+  for (auto p : calls)
+  {
+    summcall += p.second;
+    t << message("calls ") << p.first << " : " << p.second;
+  }
+  t << equal<assert, size_t>( 1000, summcall ) << FAS_FL;
+  t << equal<assert, size_t>( 156, calls.at(0) ) << FAS_FL;
+  t << equal<assert, size_t>( 269, calls.at(1) ) << FAS_FL;
+  t << equal<assert, size_t>( 556, calls.at(2) ) << FAS_FL;
+  t << equal<assert, size_t>( 19, calls.at(3) ) << FAS_FL;
+  
+  std::vector<std::string> scripts = {"", "script1.1", "script2.1", "script3.1"};
+  std::vector<std::string> services = {"service1.1", "service2.1", "service3.1"};
+  std::vector<std::string> servers = {"server1.1", "server2.1", "server3.1"};
+  std::vector<std::string> ops = {"op1.1", "op2.1", "op3.1"};
+  
+  for (size_t i=0 ; i < COUNT ; ++i)
+  {
+    auto id = cli.create_meter(
+      1, std::rand()%100
+    );
+    t << message("push... ") << i << " " << id;
+    std::this_thread::sleep_for(std::chrono::milliseconds(20));
+    t << is_true<assert>( cli.release_meter(
+      id,       
+      scripts[std::rand()%4], 
+      services[std::rand()%3],
+      servers[std::rand()%3],
+      ops[std::rand()%3], 
+      std::rand()%100) 
+    ) << FAS_FL;
+  }
+  size_t push_count = cli.pushout();
+  t << message("pushout... ") << push_count;
+  ;
+  
+}
+
 } // namespace
 
 BEGIN_SUITE(udpclient, "")
   //ADD_UNIT(udpclient1)
   //ADD_UNIT(btpgateway1)
   //ADD_UNIT(btpclient1)
-  ADD_UNIT(btpsharding1)
+  //ADD_UNIT(btpsharding1)
+  ADD_UNIT(btpsharding2)
 END_SUITE(udpclient)

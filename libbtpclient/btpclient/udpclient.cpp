@@ -13,6 +13,7 @@ udpclient::udpclient()
 bool udpclient::connect(const udpclient_options& opt)
 try
 {
+  _test = opt.test;
   context_type _context;
   udp::resolver resolver(_context);
   _receiver_endpoint = *resolver.resolve(udp::v4(), opt.addr, opt.port).begin();
@@ -32,6 +33,8 @@ try
   _socket.open(udp::v4());
   boost::system::error_code ec;
   _socket.send_to(boost::asio::buffer(d->data(),d->size()), _receiver_endpoint);
+  if (_test!=nullptr)
+    _test( std::move(d) );
   if ( handler != nullptr )
   {
     auto res = std::make_unique<data_type>();
