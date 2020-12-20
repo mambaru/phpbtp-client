@@ -5,6 +5,8 @@
 #include <string>
 #include <vector>
 #include <mutex>
+#include <chrono>
+#include <map>
 
 namespace wamba{ namespace btp{
   
@@ -12,11 +14,21 @@ class btpclient;
 
 class btpsharding
 {
+  typedef std::chrono::steady_clock clock_type;
+  typedef clock_type::time_point time_point;
+  
+  struct point_info{
+    time_point point = time_point();
+    size_t count = 0 ;
+    size_t write_size = 0;
+  };
+  
 public:
   typedef std::shared_ptr<btpclient> client_ptr;
   typedef std::pair<size_t, client_ptr> index_client_t;
   typedef std::vector<index_client_t> client_list_t;
   typedef std::mutex mutex_type;
+  typedef std::map<id_t, point_info> points_map;
   
   explicit btpsharding(const btpsharding_options& opt);
   
@@ -57,11 +69,13 @@ public:
 private:
   std::string shard_name_(const std::string& script, const std::string& service, const std::string& server, const std::string& op) const;
   size_t shard_index_(const std::string& shard_name) const;
+  client_ptr get_client_(const std::string& script, const std::string& service, const std::string& server, const std::string& op) const;
 private:
   btpsharding_options _opt;
   client_list_t _client_list;
   mutable mutex_type _mutex;
-  
+  points_map _points_map;
+  id_t _time_point_counter = 0;
 };
   
 }}

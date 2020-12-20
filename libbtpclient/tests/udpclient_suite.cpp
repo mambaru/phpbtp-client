@@ -241,17 +241,18 @@ UNIT(btpsharding2, "")
   for (size_t i=0 ; i < COUNT ; ++i)
   {
     auto id = cli.create_meter(
-      1, std::rand()%100
+      1, size_t(std::rand()%100)
     );
     t << message("push... ") << i << " " << id;
     std::this_thread::sleep_for(std::chrono::milliseconds(20));
     t << is_true<assert>( cli.release_meter(
-      id,       
-      scripts[std::rand()%4], 
-      services[std::rand()%3],
-      servers[std::rand()%3],
-      ops[std::rand()%3], 
-      std::rand()%100) 
+        id,       
+        scripts[size_t(std::rand()%4)], 
+        services[size_t(std::rand()%3)],
+        servers[size_t(std::rand()%3)],
+        ops[size_t(std::rand()%3)], 
+        size_t(std::rand()%100)
+      ) 
     ) << FAS_FL;
   }
   size_t push_count = cli.pushout();

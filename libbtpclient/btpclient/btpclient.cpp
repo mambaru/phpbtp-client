@@ -1,5 +1,6 @@
 #include "btpclient.hpp"
 #include <cstring>
+#include <iostream>
 
 namespace wamba{ namespace btp{
 
@@ -51,6 +52,7 @@ bool btpclient::release_meter(id_t id, size_t read_size )
   return _points.release_meter(id, read_size);
 }
 
+
 bool btpclient::add_time(const std::string& script, const std::string& service, const std::string& server, const std::string& op, 
                          time_t ts, size_t count)
 {
@@ -65,10 +67,26 @@ bool btpclient::add_size(const std::string& script, const std::string& service, 
 {
   auto pwrtstat = get_or_cre_(script, service, server);
   auto meter = pwrtstat->create_value_multi_meter(op + size_suffix);
-  meter.create(size, count);
+  meter.create(static_cast<wrtstat::value_type>(size), count );
   return true;
 }
 
+bool btpclient::add_complex(const std::string& script, const std::string& service, const std::string& server, const std::string& op, 
+                            time_t span, size_t count, size_t read_size, size_t write_size)
+{
+  auto pwrtstat = get_or_cre_(script, service, server);
+  
+  auto meter = pwrtstat->create_composite_multi_meter<std::chrono::microseconds>( 
+  op, op + ":write" + size_suffix, op + ":read" + size_suffix, true);
+  
+  meter.create(count, static_cast<wrtstat::value_type>(read_size), static_cast<wrtstat::value_type>(write_size), span );
+  return true;
+}
+
+size_t btpclient::pushout()
+{
+  return _time_packer->pushout() + _size_packer->pushout();
+}
 
 btpclient::wrtstat_ptr btpclient::get_or_cre_(const std::string& script, const std::string& service, const std::string& server)
 {
@@ -115,10 +133,6 @@ void btpclient::stat_handler_(const std::string& name, wrtstat::aggregated_data:
   }
 }
 
-size_t btpclient::pushout()
-{
-  return _time_packer->pushout() + _size_packer->pushout();
-}
 
 void btpclient::push_handler_(bool is_time, wrtstat::request::multi_push::ptr req)
 {

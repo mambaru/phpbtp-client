@@ -11,6 +11,7 @@ namespace{
 btpsharding::~btpsharding()
 {
   this->pushout();
+  _points_map.clear();
 }
 
 btpsharding::btpsharding(const btpsharding_options& opt)
@@ -56,13 +57,9 @@ id_t btpsharding::create_meter(
 {
   std::lock_guard<mutex_type> lk(_mutex);
   
-  if ( _client_list.empty() )
-    return 0;
-  
-  std::string shard_name = this->shard_name_(script, service, server, op);
-  size_t index = this->shard_index_(shard_name);
-  auto cli = _client_list.at(index).second;
-  return cli->create_meter(script, service, server, op, count, write_size);
+  if ( auto cli = this->get_client_(script, service, server, op) )
+    return cli->create_meter(script, service, server, op, count, write_size); 
+  return bad_id;
 }
 
 id_t btpsharding::create_meter(
@@ -70,9 +67,13 @@ id_t btpsharding::create_meter(
   size_t write_size)
 {
   std::lock_guard<mutex_type> lk(_mutex);
-  std::cout << count << " " << write_size << std::endl;
-  abort();
-  return -1;
+  id_t id = ++_time_point_counter;
+  point_info pi1;
+  pi1.count = count;
+  pi1.write_size = write_size;
+  pi1.point = clock_type::now();
+  _points_map.insert(std::make_pair(id, pi1));
+  return id;
 }
 
 bool btpsharding::add_time(const std::string& script, const std::string& service, const std::string& server, const std::string& op, 
@@ -80,27 +81,19 @@ bool btpsharding::add_time(const std::string& script, const std::string& service
 {
   std::lock_guard<mutex_type> lk(_mutex);
   
-  if ( _client_list.empty() )
-    return 0;
-  
-  std::string shard_name = this->shard_name_(script, service, server, op);
-  size_t index = this->shard_index_(shard_name);
-  auto cli = _client_list.at(index).second;
-  return cli->add_time(script, service, server, op, ts, count);  
+  if ( auto cli = this->get_client_(script, service, server, op) )
+    return cli->add_time(script, service, server, op, ts, count); 
+  return false;
 }
 
 bool btpsharding::add_size(const std::string& script, const std::string& service, const std::string& server, const std::string& op, 
                            size_t size, size_t count)
 {
   std::lock_guard<mutex_type> lk(_mutex);
-  
-  if ( _client_list.empty() )
-    return 0;
-  
-  std::string shard_name = this->shard_name_(script, service, server, op);
-  size_t index = this->shard_index_(shard_name);
-  auto cli = _client_list.at(index).second;
-  return cli->add_size(script, service, server, op, size, count);  
+    
+  if ( auto cli = this->get_client_(script, service, server, op) )
+    return cli->add_size(script, service, server, op, size, count); 
+  return false;
 }
 
 bool btpsharding::release_meter(id_t id, size_t read_size )
@@ -121,9 +114,19 @@ bool btpsharding::release_meter(
   const std::string& op,
   size_t read_size )
 {
+  auto finish = clock_type::now();
   std::lock_guard<mutex_type> lk(_mutex);
-  std::cout << id << " "  << script << " " <<  service << " " <<  server << " " << op << read_size << std::endl;
-  abort();
+  auto itr = _points_map.find(id);
+  if ( itr == _points_map.end() ) 
+    return false;
+  
+  wrtstat::time_type span = std::chrono::duration_cast<std::chrono::microseconds>( finish - itr->second.point ).count();
+
+  if ( auto cli = this->get_client_(script, service, server, op) )
+  {
+    cli->add_complex(script, service, server, op, span, itr->second.count, itr->second.write_size, read_size);
+    return true;
+  }
   
   return false;
 }
@@ -182,6 +185,23 @@ size_t btpsharding::shard_index_(const std::string& shard_name) const
   );
   return static_cast<size_t>( std::distance(std::begin(_client_list), itr) );
 }
+
+btpsharding::client_ptr btpsharding::get_client_(
+  const std::string& script, 
+  const std::string& service, 
+  const std::string& server, 
+  const std::string& op) const
+{
+  if ( _client_list.empty() )
+    return nullptr;
+  
+  std::string shard_name = this->shard_name_(script, service, server, op);
+  size_t index = this->shard_index_(shard_name);
+  if ( index < _client_list.size() )
+    return _client_list.at(index).second;
+  return nullptr;
+}
+
 
 size_t btpsharding::get_shard_index(const std::string& name) const
 {

@@ -74,6 +74,8 @@ public:
   bool add_size(const std::string& script, const std::string& service, const std::string& server, const std::string& op, 
                 size_t size, size_t count);  
 
+  bool add_complex(const std::string& script, const std::string& service, const std::string& server, const std::string& op, 
+                   time_t span, size_t count, size_t read_size, size_t write_size);  
 private:
   void stat_handler_(const std::string& name, wrtstat::aggregated_data::ptr ag);
   void push_handler_(bool is_time, wrtstat::request::multi_push::ptr req);
