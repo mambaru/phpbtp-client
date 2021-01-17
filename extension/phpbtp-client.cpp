@@ -19,7 +19,6 @@ T get_number(Php::Parameters& params, size_t pos, const T& def = T())
     return static_cast<T>(std::stol(params[pos]));
   return def;
 }
-
   
 } 
 
@@ -39,15 +38,28 @@ catch(const std::exception& e)
 Php::Value btp_create_meter(Php::Parameters& params)
 try
 {
-  std::string script = get_string(params,0);
-  std::string service = get_string(params,1);
-  std::string server = get_string(params,2);
-  std::string op = get_string(params,3);
-  size_t count = get_number<size_t>(params, 4, 1);
-  size_t write_size = get_number<size_t>(params, 5, 0);
-  
-  int64_t res = wamba::btp::create_meter(script, service, server, op, count, write_size);
-  return res;
+    std::string script = get_string(params,0);
+    std::string service = get_string(params,1);
+    std::string server = get_string(params,2);
+    std::string op = get_string(params,3);
+    size_t count = get_number<size_t>(params, 4, 1);
+    size_t write_size = get_number<size_t>(params, 5, 0);
+    int64_t res = wamba::btp::create_meter(script, service, server, op, count, write_size);
+    return res;
+}
+catch(const std::exception& e)
+{
+  Php::error << e.what() << std::flush;
+  return false;
+}
+
+Php::Value btp_create_meter2(Php::Parameters& params)
+try
+{
+    size_t count = get_number<size_t>(params, 0, 1);
+    size_t write_size = get_number<size_t>(params, 1, 0);
+    int64_t res = wamba::btp::create_meter(count, write_size);
+    return res;
 }
 catch(const std::exception& e)
 {
@@ -61,6 +73,23 @@ try
   size_t id = get_number<size_t>(params, 0);
   size_t read_size = get_number<size_t>(params, 1, 0);
   return wamba::btp::release_meter(id, read_size);
+}
+catch(const std::exception& e)
+{
+  Php::error << e.what() << std::flush;
+  return false;
+}
+
+Php::Value btp_release_meter2(Php::Parameters& params)
+try
+{
+  size_t id = get_number<size_t>(params, 0);
+  std::string script = get_string(params,1);
+  std::string service = get_string(params,2);
+  std::string server = get_string(params,3);
+  std::string op = get_string(params,4);
+  size_t read_size = get_number<size_t>(params, 5, 0);
+  return wamba::btp::release_meter(id, script, service, server, op, read_size);
 }
 catch(const std::exception& e)
 {

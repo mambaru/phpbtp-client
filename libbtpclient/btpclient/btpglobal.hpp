@@ -16,8 +16,21 @@ btp_id_t create_meter(
     size_t count = 1,
     size_t write_size = 0);
   
+btp_id_t create_meter(
+    size_t count = 1,
+    size_t write_size = 0);
+
 bool release_meter(btp_id_t id, size_t read_size = 0 );
- 
+
+bool release_meter(
+  btp_id_t id, 
+  const std::string& script,
+  const std::string& service, 
+  const std::string& server, 
+  const std::string& op,
+  size_t read_size = 0 
+);
+
 size_t pushout();
 
 

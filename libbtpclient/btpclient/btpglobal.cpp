@@ -73,7 +73,6 @@ void configure(const std::string& path)
   btp_global::instance()->initialize(opt);
 }
 
-
 btp_id_t create_meter(
   const std::string& script,
   const std::string& service, 
@@ -90,11 +89,41 @@ btp_id_t create_meter(
   throw std::domain_error("Extension phpbtp-client is not configured");
 }
 
-bool release_meter(btp_id_t id, size_t read_size)
+btp_id_t create_meter(
+  size_t count,
+  size_t write_size)
+{
+  if ( auto cli = btp_global::instance()->get() )
+  {
+    return cli->create_meter(count, write_size);
+  }
+  
+  throw std::domain_error("Extension phpbtp-client is not configured");
+}
+
+
+bool release_meter(
+  btp_id_t id, 
+  size_t read_size)
 {
   if ( auto cli = btp_global::instance()->get() )
   {
     return cli->release_meter(id, read_size);
+  }
+  throw std::domain_error("Extension phpbtp-client is not configured");
+}
+
+bool release_meter(
+  btp_id_t id, 
+  const std::string& script,
+  const std::string& service, 
+  const std::string& server, 
+  const std::string& op,
+  size_t read_size)
+{
+  if ( auto cli = btp_global::instance()->get() )
+  {
+    return cli->release_meter(id, script, service, server, op, read_size);
   }
   throw std::domain_error("Extension phpbtp-client is not configured");
 }
