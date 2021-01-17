@@ -19,10 +19,10 @@ night upgrade:
     -   echo "Удаляем бранч night-build."
     -   git push --delete ${PROJECT_SSH} night-build || true
     - fi
-    - git push --delete ${PROJECT_SSH} auto-build || true
+#    - git push --delete ${PROJECT_SSH} auto-build || true
   only:
     - schedules
-    - auto-build
+#    - auto-build
 
 night build:
   stage: build

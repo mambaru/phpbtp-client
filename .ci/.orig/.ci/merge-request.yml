@@ -31,7 +31,6 @@ devel merge:
   only:
     - wip-devel
 
-
 make pre-release:
   stage: merge request
   script:
@@ -63,17 +62,23 @@ make release:
     - git tag -f -a ${RELEASE_TAG} -m "${RELEASE_BRANCH}"
     - git push --force ${PROJECT_SSH} ${CI_COMMIT_REF_NAME}:${RELEASE_BRANCH}
     - git push --tags --force ${PROJECT_SSH} ${CI_COMMIT_REF_NAME}:${RELEASE_BRANCH}
+  only:
+    - master
+
+update next:
+  stage: build_next
+  script:
     - if [ -n "${NEXT_PROJECT}" ]; then
+    -   echo "Update next project':' ${NEXT_PROJECT}"
     -   git clone git@github.lan:${NEXT_PROJECT}.git _next_project_
     -   pushd _next_project_
     -     git checkout wip-devel
-    -     echo Удаляем бранч auto-build, чтобы гарантированно запушить
-    -     echo git push --delete git@github.lan:${NEXT_PROJECT}.git auto-build || true
-    -     git push --delete git@github.lan:${NEXT_PROJECT}.git auto-build || true
-    -     echo git push -f git@github.lan:${NEXT_PROJECT}.git wip-devel:auto-build
-    -     git push -f git@github.lan:${NEXT_PROJECT}.git wip-devel:auto-build
+    -     ${SCRIPTS}/update.sh "Auto update after build ${CI_PROJECT_NAME} <<push"
+    -     ${SCRIPTS}/upgrade.sh "auto" "master" "Auto upgrade after build ${CI_PROJECT_NAME} <<push"
+    -     git push git@github.lan:${NEXT_PROJECT}.git wip-devel:wip-devel
     -   popd
     -   rm -rf _next_project_
     - fi
   only:
     - master
+

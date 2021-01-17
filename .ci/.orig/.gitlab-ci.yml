@@ -27,6 +27,7 @@ stages:
   - cppcheck
   - build
   - merge request
+  - build_next
   - deploy
   - github.com
   - clean
