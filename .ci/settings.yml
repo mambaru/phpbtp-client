@@ -7,8 +7,8 @@
 
 variables:
 
-  # может быть использована в cmake для определения того, что сборка в gitlab-ci (rocksdb.cmake)
-  WCI_VERSION: "0.9.1"
+  # 
+  WCI_VERSION: "0.9.2"
 
   # [ON] Включить отчет о покрытии тестами (отображается в запросах на слиение)
   CODE_COVERAGE: "ON"
@@ -22,14 +22,12 @@ variables:
   # [OFF] Сборка в статике или динамике
   BUILD_SHARED_LIBS: "OFF"
 
-  # ./b2 --prefix=/usr/monamour/boost-static link=static threading=multi runtime-link=static install
-  BOOST_ROOT: "/usr/monamour/boost-static"
+  # [ON] Сборка в статике или динамике. Отлючает -static-libgcc -static-libstdc++
+  BUILD_SYSTEM_SHARED_LIBS: "ON"
 
-  # Для сборки в динамеке указываем другой путь для boost
-  #BUILD_SHARED_LIBS: "ON"
-  # Установка последней версии буста:
-  # ./b2 --prefix=/usr/monamour/boost-shared link=shared threading=multi runtime-link=shared install
-  #BOOST_ROOT: "/usr/monamour/boost-shared"
+  # ./b2 --prefix=/usr/monamour/boost link=static threading=multi runtime-link=static install
+  # ./b2 --prefix=/usr/monamour/boost link=shared threading=multi runtime-link=shared install
+  BOOST_ROOT: "/usr/monamour/boost"
 
   ROCKSDB_ROOT: "/usr/monamour/rocksdb"
 

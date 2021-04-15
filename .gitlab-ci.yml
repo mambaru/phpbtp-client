@@ -7,7 +7,7 @@ include:
 
 variables:
   GIT_SUBMODULE_STRATEGY: normal
-  PROJECT_SSH: "git@github.lan:${CI_PROJECT_NAMESPACE}/${CI_PROJECT_NAME}.git"
+  PROJECT_SSH: "git@gitlab.mamba.ru:${CI_PROJECT_NAMESPACE}/${CI_PROJECT_NAME}.git"
   GITHUB_SSH:  "git@github.com:mambaru/${CI_PROJECT_NAME}.git"
   SCRIPTS: "${CI_PROJECT_DIR}/external/cmake-ci/scripts"
 
@@ -27,8 +27,8 @@ stages:
   - cppcheck
   - build
   - merge request
-  - build_next
   - deploy
+  - build_next
   - github.com
   - clean
 
