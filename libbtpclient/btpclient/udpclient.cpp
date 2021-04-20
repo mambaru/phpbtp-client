@@ -30,8 +30,7 @@ try
 {
   context_type _context;
   socket_type _socket(_context);
-  _socket.open(udp::v4());
-  boost::system::error_code ec;
+  _socket.open(udp::v4()); 
   _socket.send_to(boost::asio::buffer(d->data(),d->size()), _receiver_endpoint);
   if (_test!=nullptr)
     _test( std::move(d) );
