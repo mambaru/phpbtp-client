@@ -1,3 +1,4 @@
+#include <stdexcept>
 #include <phpcpp.h>
 #include "phpbtp-client.hpp"
 /**
@@ -21,8 +22,8 @@ extern "C" {
         extension.add<btp_configure>("btp_configure", {});
         extension.add<btp_create_meter>("btp_create_meter", {});
         extension.add<btp_release_meter>("btp_release_meter", {});
-        extension.add<btp_create_meter>("btp_create_meter2", {});
-        extension.add<btp_release_meter>("btp_release_meter2", {});
+        extension.add<btp_create_meter2>("btp_create_meter2", {});
+        extension.add<btp_release_meter2>("btp_release_meter2", {});
         extension.add<btp_pushout>("btp_pushout", {});
         extension.add<btp_add_time>("btp_add_time", {});
         extension.add<btp_add_time>("btp_add_size", {});

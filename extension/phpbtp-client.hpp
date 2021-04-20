@@ -1,5 +1,6 @@
 #pragma once
 
+#include <stdexcept>
 #include <phpcpp/visibility.h>
 #include <phpcpp.h>
 
