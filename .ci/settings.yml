@@ -8,7 +8,7 @@
 variables:
 
   # 
-  WCI_VERSION: "0.9.2"
+  WCI_VERSION: "0.9.3"
 
   # [ON] Включить отчет о покрытии тестами (отображается в запросах на слиение)
   CODE_COVERAGE: "ON"
@@ -23,7 +23,7 @@ variables:
   BUILD_SHARED_LIBS: "OFF"
 
   # [ON] Сборка в статике или динамике. Отлючает -static-libgcc -static-libstdc++
-  BUILD_SYSTEM_SHARED_LIBS: "ON"
+  BUILD_SYSTEM_SHARED_LIBS: "OFF"
 
   # ./b2 --prefix=/usr/monamour/boost link=static threading=multi runtime-link=static install
   # ./b2 --prefix=/usr/monamour/boost link=shared threading=multi runtime-link=shared install

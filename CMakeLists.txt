@@ -26,6 +26,7 @@ wci_remove_options(-Wzero-as-null-pointer-constant)
 add_subdirectory(libbtpclient)
 
 add_custom_command(
+  COMMAND BLDDIR=${CMAKE_BINARY_DIR} make clean
   COMMAND BLDDIR=${CMAKE_BINARY_DIR} make
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/extension/
   DEPENDS btpclient libphpcpp.a.2.2.0

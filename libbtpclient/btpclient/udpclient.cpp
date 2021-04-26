@@ -1,6 +1,7 @@
 #include "udpclient.hpp"
 #include "logger.hpp"
 #include <fas/system/memory.hpp>
+#include <iostream>
 
 namespace wamba{ namespace btp{
 

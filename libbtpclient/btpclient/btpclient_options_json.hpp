@@ -21,7 +21,8 @@ struct btpclient_options_json
       wjson::member<n_packer, btpclient_options, wrtstat::packer_options, &btpclient_options::packer, wrtstat::packer_options_json>,
       wjson::member<n_time_client, btpclient_options, btpgateway_options, &btpclient_options::time_client, btpgateway_options_json>,
       wjson::member<n_size_client, btpclient_options, btpgateway_options, &btpclient_options::size_client, btpgateway_options_json>
-    >
+    >,
+    wjson::strict_mode
   > type;
   typedef type::member_list member_list;
   typedef type::serializer serializer;

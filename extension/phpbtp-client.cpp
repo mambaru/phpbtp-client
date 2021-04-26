@@ -26,6 +26,7 @@ Php::Value btp_configure(Php::Parameters& params)
 try
 {
   std::string path = get_string(params, 0);
+  std::cout << "Configure " << path << std::endl;
   wamba::btp::configure( path );
   return true;
 }

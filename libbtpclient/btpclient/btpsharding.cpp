@@ -1,7 +1,10 @@
 #include "btpsharding.hpp"
 #include "btpclient.hpp"
+#include "logger.hpp"
 #include <cstring>
 #include <iostream>
+#include <unistd.h>
+
 namespace wamba{ namespace btp{
 
 namespace{
@@ -10,6 +13,11 @@ namespace{
 
 btpsharding::~btpsharding()
 {
+  if ( _pushout_timer_flag )
+  {
+    _pushout_timer_flag=false;
+    _pushout_timer->join();
+  }
   this->pushout();
   _points_map.clear();
 }
@@ -27,6 +35,7 @@ btpsharding::btpsharding(const btpsharding_options& opt)
       ++count;
     }
   }
+  
   if ( sumval == 0)
     return;
   
@@ -45,6 +54,20 @@ btpsharding::btpsharding(const btpsharding_options& opt)
     }
   }
   
+  _pushout_timer_flag = false;
+  if ( opt.pushout_timer_s > 0)
+  {
+    _pushout_timer_flag = true;
+    time_t pushout_span = opt.pushout_timer_s;
+    _pushout_timer=std::make_shared<std::thread>([this, pushout_span](){
+        while ( this->_pushout_timer_flag )
+        {
+          sleep(pushout_span);
+          if (this->_pushout_timer_flag)
+            this->pushout();
+        }
+    });
+  }
 }
 
 id_t btpsharding::create_meter(
@@ -137,7 +160,9 @@ size_t btpsharding::pushout()
 
   size_t count = 0;
   for (auto& cli : _client_list)
+  {
     count += cli.second->pushout();
+  }
   return count;
 }
 
@@ -202,12 +227,10 @@ btpsharding::client_ptr btpsharding::get_client_(
   return nullptr;
 }
 
-
 size_t btpsharding::get_shard_index(const std::string& name) const
 {
   std::lock_guard<mutex_type> lk(_mutex);
   return this->shard_index_(name);
 }
-
 
 }}

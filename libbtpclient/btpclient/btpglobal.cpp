@@ -1,6 +1,8 @@
 #include "btpglobal.hpp"
 #include "btpsharding.hpp"
 #include "btpsharding_options_json.hpp"
+#include "logger.hpp"
+#include <wlog/wlog.hpp>
 #include <atomic>
 #include <mutex>
 #include <fstream>
@@ -60,6 +62,9 @@ namespace wamba{ namespace btp{
   
 void configure(const std::string& path)
 {
+  wlog::logger_options lopt;
+  lopt.stdout.name="cout";
+  wlog::init(lopt);
   std::ifstream ifs(path);
   typedef std::istreambuf_iterator<char> iterator;
   wamba::btp::btpsharding_options opt;

@@ -1,5 +1,7 @@
 #include <stdexcept>
 #include <phpcpp.h>
+#include <iostream>
+#include <fstream>
 #include "phpbtp-client.hpp"
 /**
  *  tell the compiler that the get_module is a pure C function
@@ -26,8 +28,17 @@ extern "C" {
         extension.add<btp_release_meter2>("btp_release_meter2", {});
         extension.add<btp_pushout>("btp_pushout", {});
         extension.add<btp_add_time>("btp_add_time", {});
-        extension.add<btp_add_time>("btp_add_size", {});
-        
+        extension.add<btp_add_size>("btp_add_size", {});
+
+        extension.onStartup([](){ std::cout << "start" << std::endl;});
+        extension.onShutdown([]()
+        {
+          std::ofstream stop("stop.txt");
+          stop << time(nullptr) << std::endl;
+          std::cout << "stop" << std::endl;
+          
+        });
+        extension.onIdle([](){ std::cout << "idle" << std::endl;});
         // return the extension
         return extension;
     }

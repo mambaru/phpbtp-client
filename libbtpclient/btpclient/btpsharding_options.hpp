@@ -1,6 +1,6 @@
 #pragma once
 #include <btpclient/btpclient_options.hpp>
-
+#include <ctime>
 namespace wamba{ namespace btp{
 
 struct btpshard_options: btpclient_options
@@ -20,6 +20,7 @@ struct btpsharding_options
 {
   std::vector<btpshard_options> shards;
   int shard_features = int(shard_feature::all);
+  time_t pushout_timer_s = 1;
   
   static bool create_schema(btpsharding_options& opt, const std::string&)
   {

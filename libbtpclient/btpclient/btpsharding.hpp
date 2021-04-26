@@ -7,6 +7,9 @@
 #include <mutex>
 #include <chrono>
 #include <map>
+#include <thread>
+#include <atomic>
+#include <fstream>
 
 namespace wamba{ namespace btp{
   
@@ -76,6 +79,9 @@ private:
   mutable mutex_type _mutex;
   points_map _points_map;
   id_t _time_point_counter = 0;
+  std::atomic_bool _pushout_timer_flag;
+  std::shared_ptr<std::thread> _pushout_timer;
+  std::ofstream _tmp;
 };
   
 }}
