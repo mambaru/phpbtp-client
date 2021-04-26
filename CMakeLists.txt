@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 3.1)
 project(phpbtp-client)
 
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+set(-Wzero-as-null-pointer-constant OFF)
 
 include(cmake/ci.cmake)
 wci_getlib(NAME wrtstat SUPERMODULE)
