@@ -10,6 +10,8 @@ add_library(
     btpglobal.cpp
 )
 
+update_ogenc(TARGETS btpclient WARNINGS -Wzero-as-null-pointer-constant OFF)
+target_compile_definitions(btpclient PRIVATE -DBOOST_ASIO_NO_DEPRECATED)
 wci_targets(btpclient)
 
 find_package(Boost REQUIRED COMPONENTS system)
