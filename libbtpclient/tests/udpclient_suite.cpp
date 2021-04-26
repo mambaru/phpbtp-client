@@ -84,11 +84,11 @@ UNIT(btpclient1, "")
   for (size_t i=0 ; i < COUNT ; ++i)
   {
     auto id = cli.create_meter(
-      scripts[std::rand()%4], 
-      services[std::rand()%3],
-      servers[std::rand()%3],
-      ops[std::rand()%3], 
-      1, std::rand()%100
+      scripts[static_cast<size_t>(std::rand()%4)], 
+      services[static_cast<size_t>(std::rand()%3)],
+      servers[static_cast<size_t>(std::rand()%3)],
+      ops[static_cast<size_t>(std::rand()%3)], 
+      1, static_cast<size_t>(std::rand()%100)
     );
     t << message("push... ") << i << " " << id;
     std::this_thread::sleep_for(std::chrono::milliseconds(20));
@@ -162,11 +162,11 @@ UNIT(btpsharding1, "")
   for (size_t i=0 ; i < COUNT ; ++i)
   {
     auto id = cli.create_meter(
-      scripts[std::rand()%4], 
-                               services[std::rand()%3],
-                               servers[std::rand()%3],
-                               ops[std::rand()%3], 
-                               1, std::rand()%100
+      scripts[static_cast<size_t>(std::rand()%4)], 
+      services[static_cast<size_t>(std::rand()%3)],
+      servers[static_cast<size_t>(std::rand()%3)],
+      ops[static_cast<size_t>(std::rand()%3)], 
+      1, static_cast<size_t>(std::rand()%100)
     );
     t << message("push... ") << i << " " << id;
     std::this_thread::sleep_for(std::chrono::milliseconds(20));

@@ -62,7 +62,7 @@ btpsharding::btpsharding(const btpsharding_options& opt)
     _pushout_timer=std::make_shared<std::thread>([this, pushout_span](){
         while ( this->_pushout_timer_flag )
         {
-          sleep(pushout_span);
+          sleep( static_cast<unsigned int>(pushout_span) );
           if (this->_pushout_timer_flag)
             this->pushout();
         }
@@ -82,7 +82,7 @@ id_t btpsharding::create_meter(
   
   if ( auto cli = this->get_client_(script, service, server, op) )
     return cli->create_meter(script, service, server, op, count, write_size); 
-  return bad_id;
+  return wrtstat::bad_id;
 }
 
 id_t btpsharding::create_meter(
