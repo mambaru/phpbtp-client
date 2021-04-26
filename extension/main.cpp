@@ -19,7 +19,7 @@ extern "C" {
     {
         // static(!) Php::Extension object that should stay in memory
         // for the entire duration of the process (that's why it's static)
-        static Php::Extension extension("btp-client", "1.1");
+        static Php::Extension extension("btp-client", "1.2");
 
         extension.add<btp_configure>("btp_configure", {});
         extension.add<btp_create_meter>("btp_create_meter", {});
