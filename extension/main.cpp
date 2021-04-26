@@ -29,16 +29,6 @@ extern "C" {
         extension.add<btp_pushout>("btp_pushout", {});
         extension.add<btp_add_time>("btp_add_time", {});
         extension.add<btp_add_size>("btp_add_size", {});
-
-        extension.onStartup([](){ std::cout << "start" << std::endl;});
-        extension.onShutdown([]()
-        {
-          std::ofstream stop("stop.txt");
-          stop << time(nullptr) << std::endl;
-          std::cout << "stop" << std::endl;
-          
-        });
-        extension.onIdle([](){ std::cout << "idle" << std::endl;});
         // return the extension
         return extension;
     }
