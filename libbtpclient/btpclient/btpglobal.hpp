@@ -8,6 +8,8 @@ namespace wamba{ namespace btp{
   
 void configure(const std::string& path);
   
+void shutdown();
+
 btp_id_t create_meter(
     const std::string& script,
     const std::string& service, 

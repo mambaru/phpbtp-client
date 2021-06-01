@@ -35,6 +35,12 @@ public:
     _btpsharding = std::make_shared<wamba::btp::btpsharding>(opt);
   }
   
+  void release()
+  {
+    std::lock_guard<std::mutex> lk(_mutex);
+    _btpsharding.reset();
+  }
+  
   btpsharding_ptr get()
   {
     std::lock_guard<std::mutex> lk(_mutex);
@@ -64,6 +70,8 @@ void configure(const std::string& path)
 {
   wlog::logger_options lopt;
   lopt.stdout.name="cout";
+  lopt.path="./phpclient.log";
+  lopt.startup_rotate = true;
   wlog::init(lopt);
   std::ifstream ifs(path);
   typedef std::istreambuf_iterator<char> iterator;
@@ -77,6 +85,13 @@ void configure(const std::string& path)
     throw std::domain_error(wjson::strerror::message_trace(er, json.begin(), json.end()));
   btp_global::instance()->initialize(opt);
 }
+
+void shutdown()
+{
+  BTP_LOG_DEBUG("wamba::btp::shutdown");
+  btp_global::instance()->release();
+}
+
 
 btp_id_t create_meter(
   const std::string& script,

@@ -5,6 +5,10 @@ project(phpbtp-client)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 set(-Wzero-as-null-pointer-constant OFF)
 
+if ( NOT BUILD_SHARED_LIBS )
+  option(BUILD_SHARED_LIBS "Build shared libs" OFF)
+endif()
+
 include(cmake/ci.cmake)
 wci_getlib(NAME wrtstat SUPERMODULE)
 wci_getlib(NAME wlog)

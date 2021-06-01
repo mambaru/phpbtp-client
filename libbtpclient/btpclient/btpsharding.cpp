@@ -13,12 +13,17 @@ namespace{
 
 btpsharding::~btpsharding()
 {
+  BTP_LOG_DEBUG("btpsharding::~btpsharding")
+
   if ( _pushout_timer_flag )
   {
+    BTP_LOG_DEBUG("btpsharding::~btpsharding: join...")
     _pushout_timer_flag=false;
     _pushout_timer->join();
   }
-  this->pushout();
+  size_t res = this->pushout();
+  wlog::only_for_log(res);
+  BTP_LOG_DEBUG("btpsharding::~btpsharding: pushout: " << res)
   _points_map.clear();
 }
 
@@ -62,9 +67,14 @@ btpsharding::btpsharding(const btpsharding_options& opt)
     _pushout_timer=std::make_shared<std::thread>([this, pushout_span](){
         while ( this->_pushout_timer_flag )
         {
+          BTP_LOG_DEBUG("pushout timer")
           sleep( static_cast<unsigned int>(pushout_span) );
           if (this->_pushout_timer_flag)
-            this->pushout();
+          {
+            size_t pushout_count = this->pushout();
+            wlog::only_for_log(pushout_count);
+            BTP_LOG_DEBUG("pushout timer: " << pushout_count)
+          }
         }
     });
   }

@@ -5,7 +5,7 @@ add_executable(
     udpclient_suite.cpp
 )
 
-target_link_libraries(test_btpclient PRIVATE btpclient fas::testing)
+target_link_libraries(test_btpclient PUBLIC btpclient fas::testing)
 
 wci_test(TARGET test_btpclient)
 

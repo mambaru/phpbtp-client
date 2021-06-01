@@ -1,4 +1,5 @@
 #include "btpclient.hpp"
+#include "logger.hpp"
 #include <cstring>
 #include <iostream>
 
@@ -8,6 +9,21 @@ namespace
 {
   static const char* size_suffix = ".{size}";
 }
+
+  bool stat_points_maps::release_meter(id_t id, size_t read_size )
+  {
+    auto itr = composite.find(id);
+    if (itr == composite.end() )
+    {
+      BTP_LOG_DEBUG("stat_points_maps: false")
+      return false;
+    }
+    BTP_LOG_DEBUG("stat_points_maps: true")
+    itr->second->set_read_size( static_cast<wrtstat::value_type>(read_size));
+    composite.erase(itr);
+    return true;
+  }
+
 
 btpclient::btpclient(const btpclient_options& opt)
   : _opt(opt)
@@ -49,6 +65,7 @@ id_t btpclient::create_meter(
 
 bool btpclient::release_meter(id_t id, size_t read_size )
 {
+  BTP_LOG_DEBUG("btpclient::release_meter id=" << id << " read_size=" << read_size)
   return _points.release_meter(id, read_size);
 }
 
@@ -85,7 +102,12 @@ bool btpclient::add_complex(const std::string& script, const std::string& servic
 
 size_t btpclient::pushout()
 {
-  return _time_packer->pushout() + _size_packer->pushout();
+  size_t time_count =_time_packer->pushout();
+  size_t size_count = _size_packer->pushout();
+  BTP_LOG_DEBUG("btpclient::pushout: time_packer:" << time_count)
+  BTP_LOG_DEBUG("btpclient::pushout: size_packer:" << size_count)
+
+  return time_count + size_count;
 }
 
 btpclient::wrtstat_ptr btpclient::get_or_cre_(const std::string& script, const std::string& service, const std::string& server)
@@ -112,6 +134,7 @@ btpclient::wrtstat_ptr btpclient::get_or_cre_(const std::string& script, const s
 
 void btpclient::stat_handler_(const std::string& name, wrtstat::aggregated_data::ptr ag)
 {
+  BTP_LOG_DEBUG(">>> btpclient::stat_handler_ " << name)
   static const size_t suffix_len = std::strlen(size_suffix);
   bool is_time = true;
   if ( name.size() > suffix_len )

@@ -1,5 +1,5 @@
 
-include(FindThreads)
+include(FindThreads REQUIRED)
 
 add_library(
   btpclient 
@@ -15,7 +15,7 @@ wci_targets(btpclient)
 
 find_package(Boost REQUIRED COMPONENTS system)
 target_include_directories(btpclient PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/..")
-target_link_libraries(btpclient PUBLIC wrtstat wlog   Boost::system)
+target_link_libraries(btpclient PUBLIC wrtstat wlog Boost::system Threads::Threads)
 
 #Threads::Threads
 

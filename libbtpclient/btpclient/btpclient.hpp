@@ -31,16 +31,7 @@ struct stat_points_maps
   value_points_map_t value;
   composite_points_map_t composite;
   
-  bool release_meter(id_t id, size_t read_size )
-  {
-    auto itr = composite.find(id);
-    if (itr == composite.end() )
-      return false;
-    itr->second->set_read_size( static_cast<wrtstat::value_type>(read_size));
-    composite.erase(itr);
-    return true;
-  }
-  
+  bool release_meter(id_t id, size_t read_size );
 };
 
 class btpclient

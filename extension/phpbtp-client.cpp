@@ -4,6 +4,7 @@
 #include <iostream>
 
 namespace{
+ 
   
 std::string get_string(Php::Parameters& params, size_t pos, const std::string& def = std::string())
 {
@@ -21,6 +22,12 @@ T get_number(Php::Parameters& params, size_t pos, const T& def = T())
 }
   
 } 
+
+void btp_shutdown()
+{
+  wamba::btp::shutdown();
+}
+
 
 Php::Value btp_configure(Php::Parameters& params)
 try

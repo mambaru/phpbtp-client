@@ -3,6 +3,8 @@
 #include <iostream>
 #include <fstream>
 #include "phpbtp-client.hpp"
+
+
 /**
  *  tell the compiler that the get_module is a pure C function
  */
@@ -29,6 +31,8 @@ extern "C" {
         extension.add<btp_pushout>("btp_pushout", {});
         extension.add<btp_add_time>("btp_add_time", {});
         extension.add<btp_add_size>("btp_add_size", {});
+        
+        extension.onShutdown(btp_shutdown);
         // return the extension
         return extension;
     }
