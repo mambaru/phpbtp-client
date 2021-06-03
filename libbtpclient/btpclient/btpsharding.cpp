@@ -9,7 +9,7 @@ namespace wamba{ namespace btp{
 
 namespace{
   static const size_t MAXPROCVAL = 1000000;
-}  
+}
 
 btpsharding::~btpsharding()
 {
@@ -21,9 +21,9 @@ btpsharding::~btpsharding()
     _pushout_timer_flag=false;
     _pushout_timer->join();
   }
-  size_t res = this->pushout();
+  size_t res = this->force_pushout();
   wlog::only_for_log(res);
-  BTP_LOG_DEBUG("btpsharding::~btpsharding: pushout: " << res)
+  BTP_LOG_DEBUG("btpsharding::~btpsharding: force_pushout: " << res)
   _points_map.clear();
 }
 
@@ -40,13 +40,13 @@ btpsharding::btpsharding(const btpsharding_options& opt)
       ++count;
     }
   }
-  
+
   if ( sumval == 0)
     return;
-  
+
   float koef = float(MAXPROCVAL) / float(sumval);
   float sumweight = 0.0;
-  
+
   for ( const auto& shard : opt.shards )
   {
     if ( shard.shard_weight != 0 )
@@ -58,7 +58,7 @@ btpsharding::btpsharding(const btpsharding_options& opt)
       _client_list.push_back(std::make_pair(index, cli));
     }
   }
-  
+
   _pushout_timer_flag = false;
   if ( opt.pushout_timer_s > 0)
   {
@@ -82,16 +82,16 @@ btpsharding::btpsharding(const btpsharding_options& opt)
 
 id_t btpsharding::create_meter(
   const std::string& script,
-  const std::string& service, 
-  const std::string& server, 
+  const std::string& service,
+  const std::string& server,
   const std::string& op,
   size_t count,
   size_t write_size)
 {
   std::lock_guard<mutex_type> lk(_mutex);
-  
+
   if ( auto cli = this->get_client_(script, service, server, op) )
-    return cli->create_meter(script, service, server, op, count, write_size); 
+    return cli->create_meter(script, service, server, op, count, write_size);
   return wrtstat::bad_id;
 }
 
@@ -109,23 +109,23 @@ id_t btpsharding::create_meter(
   return id;
 }
 
-bool btpsharding::add_time(const std::string& script, const std::string& service, const std::string& server, const std::string& op, 
+bool btpsharding::add_time(const std::string& script, const std::string& service, const std::string& server, const std::string& op,
               time_t ts, size_t count)
 {
   std::lock_guard<mutex_type> lk(_mutex);
-  
+
   if ( auto cli = this->get_client_(script, service, server, op) )
-    return cli->add_time(script, service, server, op, ts, count); 
+    return cli->add_time(script, service, server, op, ts, count);
   return false;
 }
 
-bool btpsharding::add_size(const std::string& script, const std::string& service, const std::string& server, const std::string& op, 
+bool btpsharding::add_size(const std::string& script, const std::string& service, const std::string& server, const std::string& op,
                            size_t size, size_t count)
 {
   std::lock_guard<mutex_type> lk(_mutex);
-    
+
   if ( auto cli = this->get_client_(script, service, server, op) )
-    return cli->add_size(script, service, server, op, size, count); 
+    return cli->add_size(script, service, server, op, size, count);
   return false;
 }
 
@@ -140,19 +140,19 @@ bool btpsharding::release_meter(id_t id, size_t read_size )
 }
 
 bool btpsharding::release_meter(
-  id_t id, 
+  id_t id,
   const std::string& script,
-  const std::string& service, 
-  const std::string& server, 
+  const std::string& service,
+  const std::string& server,
   const std::string& op,
   size_t read_size )
 {
   auto finish = clock_type::now();
   std::lock_guard<mutex_type> lk(_mutex);
   auto itr = _points_map.find(id);
-  if ( itr == _points_map.end() ) 
+  if ( itr == _points_map.end() )
     return false;
-  
+
   wrtstat::time_type span = std::chrono::duration_cast<std::chrono::microseconds>( finish - itr->second.point ).count();
 
   if ( auto cli = this->get_client_(script, service, server, op) )
@@ -160,7 +160,7 @@ bool btpsharding::release_meter(
     cli->add_complex(script, service, server, op, span, itr->second.count, itr->second.write_size, read_size);
     return true;
   }
-  
+
   return false;
 }
 
@@ -176,6 +176,18 @@ size_t btpsharding::pushout()
   return count;
 }
 
+size_t btpsharding::force_pushout()
+{
+  std::lock_guard<mutex_type> lk(_mutex);
+
+  size_t count = 0;
+  for (auto& cli : _client_list)
+  {
+    count += cli.second->force_pushout();
+  }
+  return count;
+}
+
 std::vector<size_t> btpsharding::get_shard_vals() const
 {
   std::lock_guard<mutex_type> lk(_mutex);
@@ -187,9 +199,9 @@ std::vector<size_t> btpsharding::get_shard_vals() const
 }
 
 std::string btpsharding::shard_name_(
-  const std::string& script, 
-  const std::string& service, 
-  const std::string& server, 
+  const std::string& script,
+  const std::string& service,
+  const std::string& server,
   const std::string& op
 ) const
 {
@@ -210,9 +222,9 @@ size_t btpsharding::shard_index_(const std::string& shard_name) const
 {
   size_t raw = std::hash<std::string>()(shard_name) % MAXPROCVAL;
   auto itr = std::lower_bound(
-    std::begin(_client_list), 
-    std::end(_client_list), 
-    std::make_pair(raw, nullptr), 
+    std::begin(_client_list),
+    std::end(_client_list),
+    std::make_pair(raw, nullptr),
     [](const index_client_t& left, const index_client_t& right)
     {
       return left.first < right.first;
@@ -222,14 +234,14 @@ size_t btpsharding::shard_index_(const std::string& shard_name) const
 }
 
 btpsharding::client_ptr btpsharding::get_client_(
-  const std::string& script, 
-  const std::string& service, 
-  const std::string& server, 
+  const std::string& script,
+  const std::string& service,
+  const std::string& server,
   const std::string& op) const
 {
   if ( _client_list.empty() )
     return nullptr;
-  
+
   std::string shard_name = this->shard_name_(script, service, server, op);
   size_t index = this->shard_index_(shard_name);
   if ( index < _client_list.size() )

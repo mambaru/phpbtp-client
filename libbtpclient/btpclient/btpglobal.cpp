@@ -24,35 +24,35 @@ public:
         sin= new btp_global();
         _instance.store(sin,std::memory_order_release);
       }
-    }   
+    }
     // volatile int dummy{};
     return sin;
   }
-  
+
   void initialize(const wamba::btp::btpsharding_options& opt)
   {
     std::lock_guard<std::mutex> lk(_mutex);
     _btpsharding = std::make_shared<wamba::btp::btpsharding>(opt);
   }
-  
+
   void release()
   {
     std::lock_guard<std::mutex> lk(_mutex);
     _btpsharding.reset();
   }
-  
+
   btpsharding_ptr get()
   {
     std::lock_guard<std::mutex> lk(_mutex);
     return _btpsharding;
   }
-  
+
 private:
   btp_global()= default;
   ~btp_global()= default;
   btp_global(const btp_global&)= delete;
   btp_global& operator=(const btp_global&)= delete;
-  
+
   std::mutex _mutex;
   btpsharding_ptr _btpsharding;
   static std::atomic<btp_global*> _instance;
@@ -65,14 +65,9 @@ std::mutex btp_global::_s_mutex;
 
 
 namespace wamba{ namespace btp{
-  
+
 void configure(const std::string& path)
 {
-  wlog::logger_options lopt;
-  lopt.stdout.name="cout";
-  lopt.path="./phpclient.log";
-  lopt.startup_rotate = true;
-  wlog::init(lopt);
   std::ifstream ifs(path);
   typedef std::istreambuf_iterator<char> iterator;
   wamba::btp::btpsharding_options opt;
@@ -83,6 +78,17 @@ void configure(const std::string& path)
   btpsharding_options_json::serializer()(opt, json.begin(), json.end(), &er);
   if ( er )
     throw std::domain_error(wjson::strerror::message_trace(er, json.begin(), json.end()));
+
+
+  if ( !opt.log_path.empty() )
+  {
+    wlog::logger_options lopt;
+    lopt.stdout.name="cout";
+    lopt.path=opt.log_path;
+    lopt.startup_rotate = true;
+    wlog::init(lopt);
+  }
+
   btp_global::instance()->initialize(opt);
 }
 
@@ -95,8 +101,8 @@ void shutdown()
 
 btp_id_t create_meter(
   const std::string& script,
-  const std::string& service, 
-  const std::string& server, 
+  const std::string& service,
+  const std::string& server,
   const std::string& op,
   size_t count,
   size_t write_size)
@@ -105,7 +111,7 @@ btp_id_t create_meter(
   {
     return cli->create_meter(script, service, server, op, count, write_size);
   }
-  
+
   throw std::domain_error("Extension phpbtp-client is not configured");
 }
 
@@ -117,13 +123,13 @@ btp_id_t create_meter(
   {
     return cli->create_meter(count, write_size);
   }
-  
+
   throw std::domain_error("Extension phpbtp-client is not configured");
 }
 
 
 bool release_meter(
-  btp_id_t id, 
+  btp_id_t id,
   size_t read_size)
 {
   if ( auto cli = btp_global::instance()->get() )
@@ -134,10 +140,10 @@ bool release_meter(
 }
 
 bool release_meter(
-  btp_id_t id, 
+  btp_id_t id,
   const std::string& script,
-  const std::string& service, 
-  const std::string& server, 
+  const std::string& service,
+  const std::string& server,
   const std::string& op,
   size_t read_size)
 {
@@ -157,27 +163,27 @@ size_t pushout()
   throw std::domain_error("Extension phpbtp-client is not configured");
 }
 
-bool add_time(const std::string& script, const std::string& service, const std::string& server, const std::string& op, 
+bool add_time(const std::string& script, const std::string& service, const std::string& server, const std::string& op,
               time_t ts, size_t count)
 {
   if ( auto cli = btp_global::instance()->get() )
   {
     return cli->add_time(script, service, server, op, ts, count);
   }
-  
-  throw std::domain_error("Extension phpbtp-client is not configured");  
+
+  throw std::domain_error("Extension phpbtp-client is not configured");
 }
 
-bool add_size(const std::string& script, const std::string& service, const std::string& server, const std::string& op, 
+bool add_size(const std::string& script, const std::string& service, const std::string& server, const std::string& op,
               size_t size, size_t count)
 {
   if ( auto cli = btp_global::instance()->get() )
   {
     return cli->add_size(script, service, server, op, size, count);
   }
-  
-  throw std::domain_error("Extension phpbtp-client is not configured");  
-  
+
+  throw std::domain_error("Extension phpbtp-client is not configured");
+
 }
 
 }}

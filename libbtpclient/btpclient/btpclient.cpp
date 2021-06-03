@@ -44,20 +44,20 @@ void btpclient::init_id(id_t start, id_t step)
 
 id_t btpclient::create_meter(
   const std::string& script,
-  const std::string& service, 
-  const std::string& server, 
+  const std::string& service,
+  const std::string& server,
   const std::string& op,
   size_t count,
   size_t write_size)
 {
   auto pwrtstat = get_or_cre_(script, service, server);
-  
+
   _id_count += _id_step;
   id_t cur_id = _id_count;
-  
-  auto meter = pwrtstat->create_composite_multi_meter<std::chrono::microseconds>( 
+
+  auto meter = pwrtstat->create_composite_multi_meter<std::chrono::microseconds>(
     op, op + ":write" + size_suffix, op + ":read" + size_suffix, true);
-  
+
   auto p = meter.create_shared(count, static_cast<wrtstat::value_type>(0), static_cast<wrtstat::value_type>(write_size) );
   _points.composite.insert(std::make_pair(cur_id, p) );
   return cur_id;
@@ -70,7 +70,7 @@ bool btpclient::release_meter(id_t id, size_t read_size )
 }
 
 
-bool btpclient::add_time(const std::string& script, const std::string& service, const std::string& server, const std::string& op, 
+bool btpclient::add_time(const std::string& script, const std::string& service, const std::string& server, const std::string& op,
                          time_t ts, size_t count)
 {
   auto pwrtstat = get_or_cre_(script, service, server);
@@ -79,7 +79,7 @@ bool btpclient::add_time(const std::string& script, const std::string& service, 
   return true;
 }
 
-bool btpclient::add_size(const std::string& script, const std::string& service, const std::string& server, const std::string& op, 
+bool btpclient::add_size(const std::string& script, const std::string& service, const std::string& server, const std::string& op,
                          size_t size, size_t count)
 {
   auto pwrtstat = get_or_cre_(script, service, server);
@@ -88,24 +88,42 @@ bool btpclient::add_size(const std::string& script, const std::string& service, 
   return true;
 }
 
-bool btpclient::add_complex(const std::string& script, const std::string& service, const std::string& server, const std::string& op, 
+bool btpclient::add_complex(const std::string& script, const std::string& service, const std::string& server, const std::string& op,
                             time_t span, size_t count, size_t read_size, size_t write_size)
 {
   auto pwrtstat = get_or_cre_(script, service, server);
-  
-  auto meter = pwrtstat->create_composite_multi_meter<std::chrono::microseconds>( 
+
+  auto meter = pwrtstat->create_composite_multi_meter<std::chrono::microseconds>(
   op, op + ":write" + size_suffix, op + ":read" + size_suffix, true);
-  
+
   meter.create(count, static_cast<wrtstat::value_type>(read_size), static_cast<wrtstat::value_type>(write_size), span );
   return true;
 }
 
 size_t btpclient::pushout()
 {
+  for (auto& wrts: _wrtstat_map)
+  {
+    wrts.second->pushout();
+  }
   size_t time_count =_time_packer->pushout();
   size_t size_count = _size_packer->pushout();
   BTP_LOG_DEBUG("btpclient::pushout: time_packer:" << time_count)
   BTP_LOG_DEBUG("btpclient::pushout: size_packer:" << size_count)
+
+  return time_count + size_count;
+}
+
+size_t btpclient::force_pushout()
+{
+  for (auto& wrts: _wrtstat_map)
+  {
+    wrts.second->force_pushout();
+  }
+  size_t time_count =_time_packer->pushout();
+  size_t size_count = _size_packer->pushout();
+  BTP_LOG_DEBUG("btpclient::force_pushout: time_packer:" << time_count)
+  BTP_LOG_DEBUG("btpclient::force_pushout: size_packer:" << size_count)
 
   return time_count + size_count;
 }
@@ -123,8 +141,11 @@ btpclient::wrtstat_ptr btpclient::get_or_cre_(const std::string& script, const s
       opt.prefixes.push_back("service~~" + service + "~~");
     }
     if ( !script.empty() )
+    {
+      opt.prefixes.push_back("script~~" + script + "~~" + service + "~~" + server + "~~");
       opt.prefixes.push_back("script~~" + script + "~~" + service + "~~" );
-    
+    }
+
     auto pwrtstat = std::make_shared<wrtstat::wrtstat>(opt);
     itr = _wrtstat_map.insert(std::make_pair(statkey, pwrtstat) ).first;
   }
@@ -134,26 +155,33 @@ btpclient::wrtstat_ptr btpclient::get_or_cre_(const std::string& script, const s
 
 void btpclient::stat_handler_(const std::string& name, wrtstat::aggregated_data::ptr ag)
 {
-  BTP_LOG_DEBUG(">>> btpclient::stat_handler_ " << name)
+  BTP_LOG_DEBUG(">>> btpclient::stat_handler_ { " << name)
   static const size_t suffix_len = std::strlen(size_suffix);
   bool is_time = true;
   if ( name.size() > suffix_len )
   {
     is_time = name.substr( name.size() - suffix_len) != size_suffix;
   }
-  
+
+  BTP_LOG_DEBUG("-1-")
   if ( is_time )
+  {
+    BTP_LOG_DEBUG("-2-")
     _time_packer->push(name, std::move(ag));
+  }
   else
   {
+    BTP_LOG_DEBUG("-3-")
     // Нули не пропускаем
     if ( ag->count!=0 || ag->max!=0 )
     {
+      BTP_LOG_DEBUG("-4-")
       std::string sname = name;
       sname.resize(name.size() - suffix_len);
       _size_packer->push( sname, std::move(ag));
     }
   }
+  BTP_LOG_DEBUG(">>> btpclient::stat_handler_ } " << name)
 }
 
 

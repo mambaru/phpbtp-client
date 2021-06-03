@@ -29,9 +29,10 @@ catch(const boost::system::error_code& ec)
 bool udpclient::send(data_ptr d, handler_fun handler)
 try
 {
+  BTP_LOG_DEBUG("udpclient::send: " << std::string(d->begin(), d->end() ) )
   context_type _context;
   socket_type _socket(_context);
-  _socket.open(udp::v4()); 
+  _socket.open(udp::v4());
   _socket.send_to(boost::asio::buffer(d->data(),d->size()), _receiver_endpoint);
   if (_test!=nullptr)
     _test( std::move(d) );
@@ -40,7 +41,7 @@ try
     auto res = std::make_unique<data_type>();
     res->resize(65535);
     udp::endpoint sender_endpoint;
-    size_t bytes_transferred = 
+    size_t bytes_transferred =
       _socket.receive_from(boost::asio::buffer(res->data(),res->size()), sender_endpoint);
     res->resize(bytes_transferred);
     handler( std::move(res) );
