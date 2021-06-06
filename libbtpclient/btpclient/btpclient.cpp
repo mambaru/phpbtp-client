@@ -155,7 +155,6 @@ btpclient::wrtstat_ptr btpclient::get_or_cre_(const std::string& script, const s
 
 void btpclient::stat_handler_(const std::string& name, wrtstat::aggregated_data::ptr ag)
 {
-  BTP_LOG_DEBUG(">>> btpclient::stat_handler_ { " << name)
   static const size_t suffix_len = std::strlen(size_suffix);
   bool is_time = true;
   if ( name.size() > suffix_len )
@@ -163,25 +162,20 @@ void btpclient::stat_handler_(const std::string& name, wrtstat::aggregated_data:
     is_time = name.substr( name.size() - suffix_len) != size_suffix;
   }
 
-  BTP_LOG_DEBUG("-1-")
   if ( is_time )
   {
-    BTP_LOG_DEBUG("-2-")
     _time_packer->push(name, std::move(ag));
   }
   else
   {
-    BTP_LOG_DEBUG("-3-")
     // Нули не пропускаем
     if ( ag->count!=0 || ag->max!=0 )
     {
-      BTP_LOG_DEBUG("-4-")
       std::string sname = name;
       sname.resize(name.size() - suffix_len);
       _size_packer->push( sname, std::move(ag));
     }
   }
-  BTP_LOG_DEBUG(">>> btpclient::stat_handler_ } " << name)
 }
 
 
