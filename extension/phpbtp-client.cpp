@@ -4,8 +4,8 @@
 #include <iostream>
 
 namespace{
- 
-  
+
+
 std::string get_string(Php::Parameters& params, size_t pos, const std::string& def = std::string())
 {
   if ( pos < params.size() )
@@ -20,8 +20,8 @@ T get_number(Php::Parameters& params, size_t pos, const T& def = T())
     return static_cast<T>(std::stol(params[pos]));
   return def;
 }
-  
-} 
+
+}
 
 void btp_shutdown()
 {
@@ -33,7 +33,6 @@ Php::Value btp_configure(Php::Parameters& params)
 try
 {
   std::string path = get_string(params, 0);
-  std::cout << "Configure " << path << std::endl;
   wamba::btp::configure( path );
   return true;
 }
@@ -126,10 +125,10 @@ try
   std::string op = get_string(params,3);
   time_t ts = get_number<time_t>(params, 4, 1);
   size_t count = get_number<size_t>(params, 5, 0);
-  
+
   bool res = wamba::btp::add_time(script, service, server, op, ts, count);
   return res;
-  
+
 }
 catch(const std::exception& e)
 {
@@ -146,7 +145,7 @@ try
   std::string op = get_string(params,3);
   time_t size = get_number<time_t>(params, 4, 1);
   size_t count = get_number<size_t>(params, 5, 0);
-  
+
   bool res = wamba::btp::add_size(script, service, server, op, size, count);
   return res;
 }
