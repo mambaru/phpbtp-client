@@ -1,0 +1,11 @@
+2021-06-09 21:17:08 BTP      DEBUG     pushout timer
+2021-06-09 21:17:08 BTP      DEBUG     btpclient::pushout: time_packer:0
+2021-06-09 21:17:08 BTP      DEBUG     btpclient::pushout: size_packer:0
+2021-06-09 21:17:08 BTP      DEBUG     wamba::btp::shutdown
+2021-06-09 21:17:08 BTP      DEBUG     btpsharding::~btpsharding
+2021-06-09 21:17:08 BTP      DEBUG     btpsharding::~btpsharding: join...
+2021-06-09 21:17:09 BTP      DEBUG     udpclient::send: {"method":"multi_push","params":["~~",["script","test.php","my_service_single_run","server134","test13434","service"],[["0~1~2~3~4",1623262628000000,634,1,634,634,634,634,634,634,634,0,[634]],["0~1~2~4",1623262628000000,726,1,726,726,726,726,726,726,726,0,[726]],["5~2~3~4",1623262628000000,309,1,309,309,309,309,309,309,309,0,[309]],["5~2~4",1623262628000000,544,1,544,544,544,544,544,544,544,0,[544]]]]}
+
+2021-06-09 21:17:09 BTP      DEBUG     btpclient::force_pushout: time_packer:1
+2021-06-09 21:17:09 BTP      DEBUG     btpclient::force_pushout: size_packer:0
+2021-06-09 21:17:09 BTP      DEBUG     btpsharding::~btpsharding: force_pushout: 1
