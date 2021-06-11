@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.1)
+cmake_minimum_required(VERSION 3.3)
 
 project(phpbtp-client)
 
@@ -14,13 +14,13 @@ wci_getlib(NAME wrtstat SUPERMODULE)
 wci_getlib(NAME wlog)
 
 add_custom_command(
-  COMMAND git clone http://github.lan/php-extensions/PHP-CPP.git 
+  COMMAND git clone http://github.lan/php-extensions/PHP-CPP.git
   WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
   OUTPUT PHP-CPP
 )
 
 add_custom_command(
-  COMMAND make && DESTDIR="${CMAKE_BINARY_DIR}/PHP-CPP" make install 
+  COMMAND make && DESTDIR="${CMAKE_BINARY_DIR}/PHP-CPP" make install
   WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/PHP-CPP
   DEPENDS PHP-CPP
   OUTPUT libphpcpp.a.2.2.0

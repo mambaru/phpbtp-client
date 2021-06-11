@@ -1,6 +1,6 @@
 <?php
 
-btp_configure("/etc/php7/conf.d/phpbtp-client.conf");
+btp_configure("./phpbtp-client.conf");
 $id=btp_create_meter2( 1, 0);
 print "id=$id\n";
 btp_release_meter2($id, "phpscript1", "phpservice1", "phpserver1", "op1", 0);
