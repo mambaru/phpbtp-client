@@ -2,7 +2,7 @@
 include(FindThreads REQUIRED)
 
 add_library(
-  btpclient 
+  btpclient
     udpclient.cpp
     btpgateway.cpp
     btpclient.cpp
@@ -12,12 +12,7 @@ add_library(
 
 target_compile_definitions(btpclient PRIVATE -DBOOST_ASIO_NO_DEPRECATED)
 wci_targets(btpclient)
+get_boost(system)
 
-find_package(Boost REQUIRED COMPONENTS system)
 target_include_directories(btpclient PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/..")
 target_link_libraries(btpclient PUBLIC wrtstat wlog Boost::system Threads::Threads)
-
-#Threads::Threads
-
-#set_source_files_properties
-# update_ogenc(TARGETS btpclient WARNINGS -Wzero-as-null-pointer-constant OFF)
