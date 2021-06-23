@@ -90,7 +90,7 @@ LINKER				=	g++
 #	with a list of all flags that should be passed to the linker.
 #
 
-COMPILER_FLAGS		=	-I../libbtpclient -I${BLDDIR}/PHP-CPP/include -Wall -c -O2 -std=c++11 -fpic -o 
+COMPILER_FLAGS		=	-I../libbtpclient -I${BLDDIR}/PHP-CPP/include -c -O2 -std=c++11 -fpic -o 
 LINKER_FLAGS		=	-shared
 LINKER_DEPENDENCIES	=	${BLDDIR}/PHP-CPP/libphpcpp.a.2.2.0 ${BLDDIR}/archive/libbtpclient.a ${BLDDIR}/archive/libwrtstat.a ${BLDDIR}/archive/libwlog.a
 
