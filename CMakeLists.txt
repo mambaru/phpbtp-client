@@ -20,13 +20,17 @@ add_custom_command(
 )
 
 add_custom_command(
-  COMMAND make && DESTDIR="${CMAKE_BINARY_DIR}/PHP-CPP" make install
+  COMMAND mv Makefile Makefile.tmp
+  COMMAND sed -e 's/\-Wall//g' Makefile.tmp > Makefile
+  COMMAND rm Makefile.tmp
+  COMMAND make 
+  COMMAND DESTDIR="${CMAKE_BINARY_DIR}/PHP-CPP" make install
   WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/PHP-CPP
   DEPENDS PHP-CPP
   OUTPUT libphpcpp.a.2.2.0
 )
 
-wci_remove_options(-Wzero-as-null-pointer-constant)
+#wci_remove_options(-Wzero-as-null-pointer-constant)
 
 add_subdirectory(libbtpclient)
 
