@@ -1,9 +1,0 @@
-[submodule "external/cmake-ci"]
-	path = external/cmake-ci
-	url = git@github.lan:cpp/cmake-ci.git
-[submodule "external/wrtstat"]
-	path = external/wrtstat
-	url = git@github.lan:cpp/wrtstat.git
-[submodule "external/wlog"]
-	path = external/wlog
-	url = git@github.lan:cpp/wlog.git
