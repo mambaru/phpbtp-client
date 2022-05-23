@@ -14,7 +14,7 @@ wci_getlib(NAME wrtstat SUPERMODULE)
 wci_getlib(NAME wlog)
 
 add_custom_command(
-  COMMAND git clone http://github.lan/php-extensions/PHP-CPP.git
+  COMMAND git clone https://gitlab.mamba.ru/php-extensions/PHP-CPP.git
   WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
   OUTPUT PHP-CPP
 )
