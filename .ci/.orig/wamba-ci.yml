@@ -7,7 +7,7 @@
 variables:
 
   # git тег, который будет установлен после успешного прохождения всех сборочных линий
-  RELEASE_TAG: "0.9.3"
+  RELEASE_TAG: "0.9.7"
 
   # ветка git для релизов
   RELEASE_BRANCH: "release-0.9"
