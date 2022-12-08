@@ -10,8 +10,8 @@ if ( NOT BUILD_SHARED_LIBS )
 endif()
 
 include(cmake/ci.cmake)
-wci_getlib(NAME wrtstat SUPERMODULE)
-wci_getlib(NAME wlog)
+wci_submodule(NAME wrtstat SUPERMODULE)
+wci_submodule(NAME wlog)
 
 add_custom_command(
   COMMAND git clone https://gitlab.mamba.ru/php-extensions/PHP-CPP.git

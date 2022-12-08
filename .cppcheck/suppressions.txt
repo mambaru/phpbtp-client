@@ -1,3 +1,5 @@
 useStlAlgorithm:
 syntaxError:
 unusedFunction:
+unknownMacro:
+unmatchedSuppression:
