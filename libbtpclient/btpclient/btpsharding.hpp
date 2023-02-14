@@ -2,6 +2,7 @@
 
 #include <btpclient/btpsharding_options.hpp>
 #include <btpclient/types.hpp>
+#include <condition_variable>
 #include <string>
 #include <vector>
 #include <mutex>
@@ -80,8 +81,13 @@ private:
   mutable mutex_type _mutex;
   points_map _points_map;
   id_t _time_point_counter = 0;
+
   std::atomic_bool _pushout_timer_flag;
   std::shared_ptr<std::thread> _pushout_timer;
+  std::condition_variable _pushout_cv;
+  mutable mutex_type _pushout_mutex;
+
+
   std::ofstream _tmp;
 };
 
