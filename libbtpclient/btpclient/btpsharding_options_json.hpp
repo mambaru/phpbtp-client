@@ -53,21 +53,4 @@ struct btpsharding_options_json
   typedef type::target target;
 
 };
-  /*
-
-enum class shard_feature: int
-{
-  script = 1,
-  service = 2,
-  server = 4,
-  op = 8,
-  all = 15
-};
-struct btpsharding_options
-{
-  std::vector<btpshard_options> shards;
-  shard_feature shard_features = shard_feature::all;
-};
-*/
-
 }}
