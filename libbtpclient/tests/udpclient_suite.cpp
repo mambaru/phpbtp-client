@@ -92,7 +92,7 @@ UNIT(btpclient1, "")
     );
     t << message("push... ") << i << " " << id;
     std::this_thread::sleep_for(std::chrono::milliseconds(20));
-    t << is_true<assert>( cli.release_meter(id, std::rand()%100) ) << FAS_FL;
+    t << is_true<assert>( cli.release_meter(id, static_cast<size_t>( std::rand()%100) ) ) << FAS_FL;
   }
   size_t push_count = cli.pushout();
   t << message("pushout... ") << push_count;
@@ -170,7 +170,7 @@ UNIT(btpsharding1, "")
     );
     t << message("push... ") << i << " " << id;
     std::this_thread::sleep_for(std::chrono::milliseconds(20));
-    t << is_true<assert>( cli.release_meter(id, std::rand()%100) ) << FAS_FL;
+    t << is_true<assert>( cli.release_meter(id, static_cast<size_t>( std::rand()%100) ) ) << FAS_FL;
   }
   size_t push_count = cli.pushout();
   t << message("pushout... ") << push_count;
@@ -258,15 +258,39 @@ UNIT(btpsharding2, "")
   size_t push_count = cli.pushout();
   t << message("pushout... ") << push_count;
   ;
-  
+}
+
+UNIT(btpsharding_timer, "")
+{
+  using namespace fas::testing;
+  using namespace wamba::btp;
+  using namespace wrtstat;
+  using namespace wjson::literals;
+
+  {
+    btpshard_options opt;
+    opt.time_client.addr = addr;
+    opt.time_client.port = "38001";
+    opt.size_client.addr = addr;
+    opt.size_client.port = "38001";
+
+    btpsharding_options opts;
+    opts.pushout_timer_ms=5000;
+    opts.shards.push_back(opt);
+    btpsharding shrd(opts);
+    sleep(6);
+    t << message("FINISH\n");
+    t << flush;
+  }
 }
 
 } // namespace
 
 BEGIN_SUITE(udpclient, "")
-  //ADD_UNIT(udpclient1)
-  //ADD_UNIT(btpgateway1)
-  //ADD_UNIT(btpclient1)
-  //ADD_UNIT(btpsharding1)
+  ADD_UNIT(udpclient1)
+  ADD_UNIT(btpgateway1)
+  ADD_UNIT(btpclient1)
+  ADD_UNIT(btpsharding1)
   ADD_UNIT(btpsharding2)
+  /*ADD_UNIT(btpsharding_timer)*/
 END_SUITE(udpclient)

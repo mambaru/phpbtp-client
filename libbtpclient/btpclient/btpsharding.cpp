@@ -19,6 +19,7 @@ btpsharding::~btpsharding()
   {
     BTP_LOG_DEBUG("btpsharding::~btpsharding: join...")
     _pushout_timer_flag=false;
+    _pushout_cv.notify_all();
     _pushout_timer->join();
   }
   size_t res = this->force_pushout();
@@ -60,20 +61,22 @@ btpsharding::btpsharding(const btpsharding_options& opt)
   }
 
   _pushout_timer_flag = false;
-  if ( opt.pushout_timer_s > 0)
+  if ( opt.pushout_timer_ms > 0)
   {
     _pushout_timer_flag = true;
-    time_t pushout_span = opt.pushout_timer_s;
+    time_t pushout_span = opt.pushout_timer_ms;
     _pushout_timer=std::make_shared<std::thread>([this, pushout_span](){
         while ( this->_pushout_timer_flag )
         {
-          BTP_LOG_DEBUG("pushout timer")
-          sleep( static_cast<unsigned int>(pushout_span) );
+          BTP_LOG_DEBUG("pushout timer: " << pushout_span << "s")
+          // sleep( static_cast<unsigned int>(pushout_span) );
+          std::unique_lock<std::mutex> lk(_pushout_mutex);
+          _pushout_cv.wait_for(lk, std::chrono::milliseconds(pushout_span), [this]() -> bool { return !this->_pushout_timer_flag;} );
           if (this->_pushout_timer_flag)
           {
             size_t pushout_count = this->pushout();
             wlog::only_for_log(pushout_count);
-            BTP_LOG_DEBUG("pushout timer: " << pushout_count)
+            BTP_LOG_DEBUG("pushout timer count: " << pushout_count)
           }
         }
     });

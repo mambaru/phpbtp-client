@@ -21,7 +21,7 @@ struct btpsharding_options
 {
   std::vector<btpshard_options> shards;
   int shard_features = int(shard_feature::all);
-  time_t pushout_timer_s = 1;
+  time_t pushout_timer_ms = 1000;
   std::string log_path;
   static bool create_schema(btpsharding_options& opt, const std::string&)
   {

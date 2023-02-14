@@ -94,8 +94,9 @@ void configure(const std::string& path)
 
 void shutdown()
 {
-  BTP_LOG_DEBUG("wamba::btp::shutdown");
+  BTP_LOG_DEBUG("BEGIN wamba::btp::shutdown");
   btp_global::instance()->release();
+  BTP_LOG_DEBUG("END wamba::btp::shutdown");
 }
 
 

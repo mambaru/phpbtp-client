@@ -1,6 +1,7 @@
 
 include(FindThreads REQUIRED)
 
+
 add_library(
   btpclient
     udpclient.cpp
@@ -8,6 +9,12 @@ add_library(
     btpclient.cpp
     btpsharding.cpp
     btpglobal.cpp
+)
+
+update_ogenc(
+  TARGETS btpclient
+  WARNINGS -Wnull-dereference
+  OFF
 )
 
 target_compile_definitions(btpclient PRIVATE -DBOOST_ASIO_NO_DEPRECATED)
