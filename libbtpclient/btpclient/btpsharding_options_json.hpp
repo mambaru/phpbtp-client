@@ -35,13 +35,13 @@ struct btpsharding_options_json
 
   JSON_NAME(shards)
   JSON_NAME(shard_features)
-  JSON_NAME(pushout_timer_s)
+  JSON_NAME(pushout_timer_ms)
   JSON_NAME(log_path)
   typedef wjson::object<
     btpsharding_options,
     wjson::member_list<
       wjson::member<n_shard_features, btpsharding_options, int, &btpsharding_options::shard_features, shard_feature_json>,
-      wjson::member<n_pushout_timer_s, btpsharding_options, time_t, &btpsharding_options::pushout_timer_ms, wjson::time_interval_ms<> >,
+      wjson::member<n_pushout_timer_ms, btpsharding_options, time_t, &btpsharding_options::pushout_timer_ms, wjson::time_interval_ms<> >,
       wjson::member<n_log_path, btpsharding_options, std::string, &btpsharding_options::log_path>,
       wjson::member<n_shards, btpsharding_options, std::vector<btpshard_options>, &btpsharding_options::shards,
       wjson::vector_of<btpshard_options_json> >
