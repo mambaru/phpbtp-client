@@ -36,6 +36,8 @@ public:
 
   explicit btpsharding(const btpsharding_options& opt);
 
+  void stop();
+
   virtual ~btpsharding();
 
   id_t create_meter(
@@ -72,6 +74,10 @@ public:
   bool add_size(const std::string& script, const std::string& service, const std::string& server, const std::string& op,
                 size_t size, size_t count);
 private:
+  size_t pushout_();
+  size_t force_pushout_();
+  void pushout_by_timer_();
+
   std::string shard_name_(const std::string& script, const std::string& service, const std::string& server, const std::string& op) const;
   size_t shard_index_(const std::string& shard_name) const;
   client_ptr get_client_(const std::string& script, const std::string& service, const std::string& server, const std::string& op) const;
@@ -82,8 +88,9 @@ private:
   points_map _points_map;
   id_t _time_point_counter = 0;
 
+  time_point _pushout_time;
   std::atomic_bool _pushout_timer_flag;
-  std::shared_ptr<std::thread> _pushout_timer;
+  std::shared_ptr<std::thread> _pushout_thread;
   std::condition_variable _pushout_cv;
   mutable mutex_type _pushout_mutex;
 

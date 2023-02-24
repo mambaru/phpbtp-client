@@ -13,19 +13,25 @@ namespace{
 
 btpsharding::~btpsharding()
 {
-  BTP_LOG_DEBUG("btpsharding::~btpsharding")
+  if ( !_points_map.empty() )
+    this->stop();
+}
 
+void btpsharding::stop()
+{
+  BTP_LOG_DEBUG("btpsharding::::stop")
   if ( _pushout_timer_flag )
   {
-    BTP_LOG_DEBUG("btpsharding::~btpsharding: join...")
+    BTP_LOG_DEBUG("btpsharding::::stop: join...")
     _pushout_timer_flag=false;
     _pushout_cv.notify_all();
-    _pushout_timer->join();
+    _pushout_thread->join();
   }
   size_t res = this->force_pushout();
   wlog::only_for_log(res);
-  BTP_LOG_DEBUG("btpsharding::~btpsharding: force_pushout: " << res)
+  BTP_LOG_DEBUG("btpsharding::::stop: force_pushout: " << res)
   _points_map.clear();
+
 }
 
 btpsharding::btpsharding(const btpsharding_options& opt)
@@ -61,15 +67,14 @@ btpsharding::btpsharding(const btpsharding_options& opt)
   }
 
   _pushout_timer_flag = false;
-  if ( opt.pushout_timer_ms > 0)
+  if ( _opt.pushout_timer_ms > 0 && _opt.pushout_thread )
   {
     _pushout_timer_flag = true;
-    time_t pushout_span = opt.pushout_timer_ms;
-    _pushout_timer=std::make_shared<std::thread>([this, pushout_span](){
+    time_t pushout_span = _opt.pushout_timer_ms;
+    _pushout_thread=std::make_shared<std::thread>([this, pushout_span](){
         while ( this->_pushout_timer_flag )
         {
           BTP_LOG_DEBUG("pushout timer: " << pushout_span << "s")
-          // sleep( static_cast<unsigned int>(pushout_span) );
           std::unique_lock<std::mutex> lk(_pushout_mutex);
           _pushout_cv.wait_for(lk, std::chrono::milliseconds(pushout_span), [this]() -> bool { return !this->_pushout_timer_flag;} );
           if (this->_pushout_timer_flag)
@@ -81,6 +86,8 @@ btpsharding::btpsharding(const btpsharding_options& opt)
         }
     });
   }
+
+  _pushout_time = clock_type::now() + std::chrono::milliseconds(_opt.pushout_timer_ms);
 }
 
 id_t btpsharding::create_meter(
@@ -92,7 +99,7 @@ id_t btpsharding::create_meter(
   size_t write_size)
 {
   std::lock_guard<mutex_type> lk(_mutex);
-
+  this->pushout_by_timer_();
   if ( auto cli = this->get_client_(script, service, server, op) )
     return cli->create_meter(script, service, server, op, count, write_size);
   return wrtstat::bad_id;
@@ -103,6 +110,7 @@ id_t btpsharding::create_meter(
   size_t write_size)
 {
   std::lock_guard<mutex_type> lk(_mutex);
+  this->pushout_by_timer_();
   id_t id = ++_time_point_counter;
   point_info pi1;
   pi1.count = count;
@@ -116,7 +124,7 @@ bool btpsharding::add_time(const std::string& script, const std::string& service
               time_t ts, size_t count)
 {
   std::lock_guard<mutex_type> lk(_mutex);
-
+  this->pushout_by_timer_();
   if ( auto cli = this->get_client_(script, service, server, op) )
     return cli->add_time(script, service, server, op, ts, count);
   return false;
@@ -126,7 +134,7 @@ bool btpsharding::add_size(const std::string& script, const std::string& service
                            size_t size, size_t count)
 {
   std::lock_guard<mutex_type> lk(_mutex);
-
+  this->pushout_by_timer_();
   if ( auto cli = this->get_client_(script, service, server, op) )
     return cli->add_size(script, service, server, op, size, count);
   return false;
@@ -135,7 +143,7 @@ bool btpsharding::add_size(const std::string& script, const std::string& service
 bool btpsharding::release_meter(id_t id, size_t read_size )
 {
   std::lock_guard<mutex_type> lk(_mutex);
-
+  this->pushout_by_timer_();
   if ( id == 0 )
     return false;
   auto cli = _client_list.at( id % _client_list.size() ).second;
@@ -152,6 +160,7 @@ bool btpsharding::release_meter(
 {
   auto finish = clock_type::now();
   std::lock_guard<mutex_type> lk(_mutex);
+  this->pushout_by_timer_();
   auto itr = _points_map.find(id);
   if ( itr == _points_map.end() )
     return false;
@@ -170,25 +179,14 @@ bool btpsharding::release_meter(
 size_t btpsharding::pushout()
 {
   std::lock_guard<mutex_type> lk(_mutex);
-
-  size_t count = 0;
-  for (auto& cli : _client_list)
-  {
-    count += cli.second->pushout();
-  }
-  return count;
+  return this->pushout_();
 }
 
 size_t btpsharding::force_pushout()
 {
   std::lock_guard<mutex_type> lk(_mutex);
 
-  size_t count = 0;
-  for (auto& cli : _client_list)
-  {
-    count += cli.second->force_pushout();
-  }
-  return count;
+  return this->force_pushout_();
 }
 
 std::vector<size_t> btpsharding::get_shard_vals() const
@@ -257,5 +255,36 @@ size_t btpsharding::get_shard_index(const std::string& name) const
   std::lock_guard<mutex_type> lk(_mutex);
   return this->shard_index_(name);
 }
+
+size_t btpsharding::pushout_()
+{
+  size_t count = 0;
+  for (auto& cli : _client_list)
+  {
+    count += cli.second->pushout();
+  }
+  _pushout_time = clock_type::now() + std::chrono::milliseconds(_opt.pushout_timer_ms);
+  return count;
+}
+
+size_t btpsharding::force_pushout_()
+{
+  size_t count = 0;
+  for (auto& cli : _client_list)
+  {
+    count += cli.second->force_pushout();
+  }
+  _pushout_time = clock_type::now() + std::chrono::milliseconds(_opt.pushout_timer_ms);
+  return count;
+}
+
+void btpsharding::pushout_by_timer_()
+{
+  if ( clock_type::now() > _pushout_time )
+  {
+    this->pushout_();
+  }
+}
+
 
 }}
