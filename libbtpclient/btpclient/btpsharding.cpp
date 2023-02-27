@@ -280,7 +280,8 @@ size_t btpsharding::force_pushout_()
 
 void btpsharding::pushout_by_timer_()
 {
-  if ( clock_type::now() > _pushout_time )
+  auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(_pushout_time -  clock_type::now());
+  if ( ms.count() < 0 )
   {
     this->pushout_();
   }
