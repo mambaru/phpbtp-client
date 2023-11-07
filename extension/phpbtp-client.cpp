@@ -24,17 +24,32 @@ T get_number(Php::Parameters& params, size_t pos, const T& def = T())
 }
 
 void btp_shutdown()
+try
 {
   wamba::btp::shutdown();
 }
+catch(const std::exception& e)
+{
+  Php::error << e.what() << std::flush;
+}
+
+void btp_idle()
+try
+{
+  wamba::btp::idle_middle();
+}
+catch(const std::exception& e)
+{
+  Php::error << e.what() << std::flush;
+}
+
 
 
 Php::Value btp_configure(Php::Parameters& params)
 try
 {
   std::string path = get_string(params, 0);
-  wamba::btp::configure( path );
-  return true;
+  return wamba::btp::configure( path );
 }
 catch(const std::exception& e)
 {
@@ -128,7 +143,6 @@ try
 
   bool res = wamba::btp::add_time(script, service, server, op, ts, count);
   return res;
-
 }
 catch(const std::exception& e)
 {

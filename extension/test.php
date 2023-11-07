@@ -19,7 +19,8 @@ sleep(0.1);
 btp_add_time("phpscript1","phpservice1","phpserver1","add_time1", 140, 1);
 sleep(0.1);
 btp_add_time("phpscript1","phpservice1","phpserver1","add_time1", 150, 1);
-#$count=btp_pushout();
-#print "count=$count\n";
+sleep(1);
+$count=btp_pushout();
+print "count=$count\n";
 
 ?>

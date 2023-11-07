@@ -8,6 +8,7 @@ namespace wamba{ namespace btp{
 
 struct udpclient_options
 {
+  bool suspend = false;
   std::string addr;
   std::string port;
   

@@ -64,6 +64,7 @@ public:
 
   size_t pushout();
   size_t force_pushout();
+  size_t pushout_by_timer();
 
   std::vector<size_t> get_shard_vals() const;
 
@@ -76,7 +77,7 @@ public:
 private:
   size_t pushout_();
   size_t force_pushout_();
-  void pushout_by_timer_();
+  size_t pushout_by_timer_();
 
   std::string shard_name_(const std::string& script, const std::string& service, const std::string& server, const std::string& op) const;
   size_t shard_index_(const std::string& shard_name) const;

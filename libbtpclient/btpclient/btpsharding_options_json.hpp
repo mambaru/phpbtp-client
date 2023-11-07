@@ -38,9 +38,11 @@ struct btpsharding_options_json
   JSON_NAME(pushout_timer_ms)
   JSON_NAME(pushout_thread)
   JSON_NAME(log_path)
+  JSON_NAME(suspend)
   typedef wjson::object<
     btpsharding_options,
     wjson::member_list<
+      wjson::member<n_suspend, btpsharding_options, bool, &btpsharding_options::suspend>,
       wjson::member<n_shard_features, btpsharding_options, int, &btpsharding_options::shard_features, shard_feature_json>,
       wjson::member<n_pushout_timer_ms, btpsharding_options, time_t, &btpsharding_options::pushout_timer_ms, wjson::time_interval_ms<> >,
       wjson::member<n_pushout_thread, btpsharding_options, bool, &btpsharding_options::pushout_thread >,

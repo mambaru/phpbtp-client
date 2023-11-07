@@ -6,8 +6,11 @@ typedef size_t btp_id_t;
 
 namespace wamba{ namespace btp{
   
-void configure(const std::string& path);
+bool configure(const std::string& path);
   
+// Вызывается между загрузками стариц если не выгружфется
+void idle_middle();
+
 void shutdown();
 
 btp_id_t create_meter(

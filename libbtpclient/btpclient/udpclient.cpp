@@ -8,16 +8,19 @@ namespace wamba{ namespace btp{
 using boost::asio::ip::udp;
 
 udpclient::udpclient()
+  : _socket(_context)
 {
 }
 
 bool udpclient::connect(const udpclient_options& opt)
 try
 {
+  _suspend = opt.suspend;
   _test = opt.test;
-  context_type _context;
+ // context_type _context;
   udp::resolver resolver(_context);
   _receiver_endpoint = *resolver.resolve(udp::v4(), opt.addr, opt.port).begin();
+  _socket.open(udp::v4());
   return true;
 }
 catch(const boost::system::error_code& ec)
@@ -29,13 +32,24 @@ catch(const boost::system::error_code& ec)
 bool udpclient::send(data_ptr d, handler_fun handler)
 try
 {
-  BTP_LOG_DEBUG("udpclient::send: " << std::string(d->begin(), d->end() ) )
-  context_type _context;
-  socket_type _socket(_context);
-  _socket.open(udp::v4());
-  _socket.send_to(boost::asio::buffer(d->data(),d->size()), _receiver_endpoint);
+  if ( _suspend )
+    return true;
+
+  BTP_LOG_DEBUG("udpclient::send")
+
   if (_test!=nullptr)
+  {
+    BTP_LOG_DEBUG("udpclient::send TEST!")
     _test( std::move(d) );
+    return true;
+  }
+
+  BTP_LOG_DEBUG("udpclient::send to ")
+  // context_type _context;
+
+  //socket_type _socket(_context);
+  // _socket.open(udp::v4());
+  _socket.send_to(boost::asio::buffer(d->data(),d->size()), _receiver_endpoint);
   if ( handler != nullptr )
   {
     auto res = std::make_unique<data_type>();
@@ -46,6 +60,11 @@ try
     res->resize(bytes_transferred);
     handler( std::move(res) );
   }
+  else
+  {
+
+  }
+  // _socket.close();
   return true;
 }
 catch(const boost::system::error_code& ec)

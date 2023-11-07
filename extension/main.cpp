@@ -32,6 +32,7 @@ extern "C" {
         extension.add<btp_add_time>("btp_add_time", {});
         extension.add<btp_add_size>("btp_add_size", {});
         
+        extension.onIdle(btp_idle);
         extension.onShutdown(btp_shutdown);
         // return the extension
         return extension;

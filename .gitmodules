@@ -1,0 +1,9 @@
+[submodule "external/cmake-ci"]
+	path = external/cmake-ci
+	url = ../cmake-ci.git
+[submodule "external/wrtstat"]
+	path = external/wrtstat
+	url = ../wrtstat.git
+[submodule "external/wlog"]
+	path = external/wlog
+	url = ../wlog.git

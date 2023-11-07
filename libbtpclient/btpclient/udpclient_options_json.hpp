@@ -5,12 +5,14 @@ namespace wamba{ namespace btp{
 
 struct udpclient_options_json
 {
+  JSON_NAME(suspend)
   JSON_NAME(addr)
   JSON_NAME(port)
   
   typedef wjson::object<
     udpclient_options,
     wjson::member_list<
+      wjson::member<n_suspend, udpclient_options, bool, &udpclient_options::suspend>,
       wjson::member<n_addr, udpclient_options, std::string, &udpclient_options::addr>,
       wjson::member<n_port, udpclient_options, std::string, &udpclient_options::port>
     >

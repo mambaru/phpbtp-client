@@ -4,6 +4,8 @@
 #include <phpcpp/visibility.h>
 #include <phpcpp.h>
 
+
+void btp_idle();
 void btp_shutdown();
 
 Php::Value btp_configure(Php::Parameters&);

@@ -17,8 +17,11 @@ public:
   bool connect(const udpclient_options& opt);
   bool send(data_ptr d, handler_fun handler);
 private:
+  context_type _context;
+  socket_type _socket;
   endpoint_type _receiver_endpoint;
   handler_fun _test;
+  bool _suspend = false;
 };
   
 }}

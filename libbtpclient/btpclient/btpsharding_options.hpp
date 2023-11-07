@@ -19,6 +19,7 @@ enum class shard_feature: int
 
 struct btpsharding_options
 {
+  bool suspend = false;
   std::vector<btpshard_options> shards;
   int shard_features = int(shard_feature::all);
   time_t pushout_timer_ms = 1000;

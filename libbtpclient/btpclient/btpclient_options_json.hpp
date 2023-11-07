@@ -9,6 +9,8 @@ namespace wamba{ namespace btp{
 
 struct btpclient_options_json
 {
+  JSON_NAME(only_pack)
+  JSON_NAME(open_metrics_limit)
   JSON_NAME(time_client)
   JSON_NAME(size_client)
   JSON_NAME(aggregator)
@@ -17,6 +19,8 @@ struct btpclient_options_json
   typedef wjson::object<
     btpclient_options,
     wjson::member_list<
+      wjson::member<n_only_pack, btpclient_options, bool, &btpclient_options::only_pack>,
+      wjson::member<n_open_metrics_limit, btpclient_options, size_t, &btpclient_options::open_metrics_limit>,
       wjson::member<n_aggregator, btpclient_options, wrtstat::wrtstat_options, &btpclient_options::stat, wrtstat::wrtstat_options_json>,
       wjson::member<n_packer, btpclient_options, wrtstat::packer_options, &btpclient_options::packer, wrtstat::packer_options_json>,
       wjson::member<n_time_client, btpclient_options, btpgateway_options, &btpclient_options::time_client, btpgateway_options_json>,
