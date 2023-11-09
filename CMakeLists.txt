@@ -14,7 +14,7 @@ wci_submodule(NAME wrtstat SUPERMODULE)
 wci_submodule(NAME wlog)
 
 add_custom_command(
-  COMMAND git clone https://gitlab.mamba.ru/php-extensions/PHP-CPP.git
+  COMMAND git clone https://github.com/CopernicaMarketingSoftware/PHP-CPP.git
   WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
   OUTPUT PHP-CPP
 )
