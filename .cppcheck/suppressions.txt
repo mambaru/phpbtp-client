@@ -1,7 +1,0 @@
-useStlAlgorithm:
-syntaxError:
-unusedFunction:
-unknownMacro:
-unmatchedSuppression:
-functionConst:
-functionStatic:
