@@ -5,7 +5,6 @@
 
 # phpbtp-client
 
-* [Ссылка на проект](http://github.lan/cpp/phpbtp-client)
 * [Сборка проекта](Build.md)
 
 ## API
