@@ -1,0 +1,107 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=9"/>
+<meta name="generator" content="Doxygen 1.9.1"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>btpd: Обновление 14.02.2023</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="customdoxygen.css" rel="stylesheet" type="text/css"/>
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr style="height: 56px;">
+  <td id="projectalign" style="padding-left: 0.5em;">
+   <div id="projectname">btpd
+   </div>
+  </td>
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Создано системой Doxygen 1.9.1 -->
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(function() {
+  initMenu('',false,false,'search.php','Поиск');
+});
+/* @license-end */</script>
+<div id="main-nav"></div>
+</div><!-- top -->
+<div class="PageDoc"><div class="header">
+  <div class="headertitle">
+<div class="title">Обновление 14.02.2023 </div>  </div>
+</div><!--header-->
+<div class="contents">
+<div class="textblock"><ul>
+<li>В конфигурации <b>pushout_timer_s</b> переименован в <b>pushout_timer_ms</b>. Соответственно значение нужно указывать в миллисекундах</li>
+<li>Прерывание потока таймера при завершении работы</li>
+<li>Обновлен PHP-CPP до 2.3.5</li>
+</ul>
+<h1><a class="anchor" id="autotoc_md14"></a>
+Установка</h1>
+<p>Собранные расширения для Debian лежат в папке</p>
+<div class="fragment"><div class="line">repobuild4:/monamour/phpbtp-client/</div>
+</div><!-- fragment --><table class="markdownTable">
+<tr class="markdownTableHead">
+<th class="markdownTableHeadNone"></th><th class="markdownTableHeadNone"></th></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">phpbtp-client-release.tar.gz   </td><td class="markdownTableBodyNone">Текущий релиз    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">phpbtp-client-pre-release.tar.gz   </td><td class="markdownTableBodyNone">Предрелизная версия с отладочной информацией    </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">phpbtp-client-devel.tar.gz   </td><td class="markdownTableBodyNone">Рабочая версия для отладки    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">phpbtp-client-wip.tar.gz   </td><td class="markdownTableBodyNone">Текущая версия в разработке   </td></tr>
+</table>
+<p>Скачиваем и устанавливаем:</p>
+<div class="fragment"><div class="line">scp repobuild4:/monamour/phpbtp-client/phpbtp-client-release.tar.gz .</div>
+<div class="line">tar -xvf phpbtp-client-release.tar.gz</div>
+<div class="line">sudo make install</div>
+</div><!-- fragment --><p>В архиве уже собранная либа phpbtp-client.so, make-файл просто копирует ее в директорию расширений php. Также копирует phpbtp-client.ini файл для php и JSON-конфигурацию phpbtp-client.conf в директорию /etc/php7/conf.d. Полный путь к файлу конфигурации нужно будет передать при вызове btp_configure. На данном этапе phpbtp-client.conf сконфигурирован на <code>Серевер:devel</code> (dd2: 192.168.2.13)</p>
+<p>Чтобы проверить: </p><div class="fragment"><div class="line">php test.php</div>
+<div class="line">sleep 1 </div>
+<div class="line">php test.php</div>
+</div><!-- fragment --><p> Чтобы данные появились на графиках нужно запустить пару раз (см. график phpservice1 на <code>Серевер:devel</code> в btp) и работает пока только 5-секундный график</p>
+<h2><a class="anchor" id="autotoc_md15"></a>
+Конфигурация</h2>
+<p>Вся конфигурация в JSON-файле</p>
+<h2><a class="anchor" id="autotoc_md16"></a>
+Сборка</h2>
+<p>Для ручной сборки на repobuild4 или repobuild3: </p><div class="fragment"><div class="line">git clone git@gitlab.mamba.ru:cpp/phpbtp-client.git</div>
+<div class="line">cd phpbtp-client</div>
+<div class="line">BOOST_ROOT=/usr/monamour/boost/ make static</div>
+<div class="line">cd build/bin</div>
+<div class="line">ls -l</div>
+</div><!-- fragment --><p> Для сборки под CentOS нужно установлить cmake3 и задать переменную CMAKE: </p><div class="fragment"><div class="line">CMAKE=cmake3 CXX_STANDARD=11 make static</div>
+</div><!-- fragment --><p>В случае успешной сборки в директории build/bin: </p><div class="fragment"><div class="line">Makefile</div>
+<div class="line">phpbtp-client.conf</div>
+<div class="line">phpbtp-client.ini</div>
+<div class="line">phpbtp-client.so</div>
+<div class="line">test.php</div>
+</div><!-- fragment --><p>Эти файлы нужно перенести на целевую машину и выполнить <code>make install</code></p>
+<p>Требования:</p><ul>
+<li>g++ 4.9 и выше (до g++-9, на g++-10 есть проблемы (январь 2021))</li>
+<li>git</li>
+<li>cmake 3.1 и выше</li>
+<li>boost-1.76 (самый свежий) собраный с ключами <code>./b2 link=static runtime-link=static</code></li>
+<li>php7 </li>
+</ul>
+</div></div><!-- contents -->
+</div><!-- PageDoc -->
+<!-- start footer part -->
+<hr class="footer"/><address class="footer"><small>
+Создано системой&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1
+</small></address>
+</body>
+</html>

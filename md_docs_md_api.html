@@ -1,0 +1,164 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "https://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=9"/>
+<meta name="generator" content="Doxygen 1.9.1"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>btpd: phpbtp-client</title>
+<link href="tabs.css" rel="stylesheet" type="text/css"/>
+<script type="text/javascript" src="jquery.js"></script>
+<script type="text/javascript" src="dynsections.js"></script>
+<link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="customdoxygen.css" rel="stylesheet" type="text/css"/>
+</head>
+<body>
+<div id="top"><!-- do not remove this div, it is closed by doxygen! -->
+<div id="titlearea">
+<table cellspacing="0" cellpadding="0">
+ <tbody>
+ <tr style="height: 56px;">
+  <td id="projectalign" style="padding-left: 0.5em;">
+   <div id="projectname">btpd
+   </div>
+  </td>
+ </tr>
+ </tbody>
+</table>
+</div>
+<!-- end header part -->
+<!-- Создано системой Doxygen 1.9.1 -->
+<script type="text/javascript" src="menudata.js"></script>
+<script type="text/javascript" src="menu.js"></script>
+<script type="text/javascript">
+/* @license magnet:?xt=urn:btih:cf05388f2679ee054f2beb29a391d25f4e673ac3&amp;dn=gpl-2.0.txt GPL-v2 */
+$(function() {
+  initMenu('',false,false,'search.php','Поиск');
+});
+/* @license-end */</script>
+<div id="main-nav"></div>
+</div><!-- top -->
+<div class="PageDoc"><div class="header">
+  <div class="headertitle">
+<div class="title">phpbtp-client </div>  </div>
+</div><!--header-->
+<div class="contents">
+<div class="textblock"><ul>
+<li><a href="http://github.lan/cpp/phpbtp-client">Ссылка на проект</a></li>
+<li>Сборка проекта</li>
+</ul>
+<h1><a class="anchor" id="autotoc_md5"></a>
+API</h1>
+<h2><a class="anchor" id="autotoc_md6"></a>
+btp_configure</h2>
+<ul>
+<li>path - полный путь к файлу конфигурации</li>
+</ul>
+<p>Создает и конфигурирует клиента к btp. Конфигурация в формате JSON. Эта функция должна быть вызвана первой.</p>
+<h2><a class="anchor" id="autotoc_md7"></a>
+btp_create_meter</h2>
+<ul>
+<li><b>script</b> - имя скрипта (может быть "" )</li>
+<li><b>service</b> - имя сервиса</li>
+<li><b>server</b> - имя сервера</li>
+<li><b>op</b> - операция</li>
+<li><b>count</b> - количество операций (count на графиках) за измеряемый промежуток времени (Опционально, по умолчанию 1) <br  />
+</li>
+<li><b>write_size</b> - размер входных данных (в попугаях) либо размер json-запроса в байтах (Опционально, по умолчанию 0)</li>
+<li><b><dl class="section return"><dt>Возвращает</dt><dd>- возвращает идентификатор измерителя (таймера)</dd></dl>
+Создает объект для измерения времени обработки запроса к внешним системам или длительной операции. По завершению операции идентификатор, который вернул этот метод, нужно передать в <b>btp_release_meter</b>. Интервал между вызовами этих функций будет отображаться на графиках в перцентелях. Если название метрики определяется только в конце измеряемого интервала, то нужно использовать аналогичную пару <b>btp_create_meter2</b> <b>btp_release_meter2</b></b></li>
+</ul>
+<p><b>Если за измеряемый интервал времени было произведено несколько операций, то их количество передаем в параметре <b>count</b> (зеленый график в бтп). Не имеет особого смысла использовать эту возможность для оптимизации сетевого траффика, так так текущая реализация умеет производить агрегацию данных аналогично серверу бтп. Можно вызвать в цикле миллион раз пару <b>btp_create_meter</b> - <b>btp_release_meter</b>, данные отправятся на сервер уже в агрегированном (компактом) состоянии только при финальном <b>автоматическом</b> вызове <b>btp_pushout</b> после завершения работы скрипта.</b></p>
+<p><b>При замере запросов к JSONRPC-демонам или другим внешним системам, в параметре <b>write_size</b> можно передать размер запроса в байтах. Если этот параметр не нулевой, то будет создан еще один график с именем операции <b>op:write</b> (<b>op</b> название операции) где в перцентилях будут показаны размеры (например в размер байтах запроса JSONRPC к демону), а count будет дублировать основной <b>count</b> (число запросов), тогда по галочке "мощность" можно будет отсортировать скрипты по траффику. В конфигурации можно задать, чтобы эти графики размеров отправлялись на отдельный сервер бтп. Так же будет создан график <b>op:traff</b> (не реализовано) аналогичный <b>op:write</b>, но на графике <b>count</b> будет суммарный траффик за интервал (например на минутном графике это суммарный трафик за минуту)</b></p>
+<p><b>В общем во <b>write_size</b> можно передавать любых попугаев (размер обрабатываемого файла или массива), но в этом случае суффикс **:write** будет сбивать с толку. Нужно придумать или более общее название, либо использовать для попугаев другие функции.</b></p>
+<p><b>Для замера входящего трафика (размеры ответов на запросы) значения передаются в <b>btp_release_meter</b> параметром <b>read_size</b> (к моменту вызова этого метода вы уже знаете размер ответа на запрос)</b></p>
+<p><b>При вызове <b>btp_create_meter("script1", "service1", "server1", "op1")</b> будут созданы три метрики (как и раньше): </p><div class="fragment"><div class="line">script~~script1~~service1~~server1~~op1</div>
+<div class="line">service~~service1~~server1~~op1</div>
+<div class="line">service~~service1~~op1</div>
+</div><!-- fragment --><p> Если первым параметром передать пустую строку <b>btp_create_meter("", "service1", "server1", "op1")</b> (без скрипта), то две: </p><div class="fragment"><div class="line">service~~service1~~server1~~op1</div>
+<div class="line">service~~service1~~op1</div>
+</div><!-- fragment --><p> Такой формат нужен только для корректного отображения списка доступных графиков на <a href="http://btp.stat1.lan/">http://btp.stat1.lan/</a>, но сам сервер не налагает ограничений на формат ключей. Для отправки в произвольном формате ключа первые три параметра нужно задать пустой строкой: </p><div class="fragment"><div class="line">btp_create_meter(&quot;&quot;, &quot;&quot;, &quot;&quot;, &quot;любое имя&quot;)</div>
+</div><!-- fragment --><p> Для работы с ключами произвольного формата нужен отдельный инстанс сервера БТП и клиент который может с ним работать. Недопустимо в таком формате отправлять данные на сервер с графиками с которым заработает <a href="http://btp.stat1.lan/">http://btp.stat1.lan/</a></b></p>
+<p><b>Если задан ненулевой параметр <b>write_size</b> то будут автоматом созданы еще шесть метрик: </p><div class="fragment"><div class="line">script~~script1~~service1~~server1~~op1:write</div>
+<div class="line">service~~service1~~server1~~op1:write</div>
+<div class="line">service~~service1~~op1:write</div>
+<div class="line">script~~script1~~service1~~server1~~op1:traff</div>
+<div class="line">service~~service1~~server1~~op1:traff</div>
+<div class="line">service~~service1~~op1:traff</div>
+</div><!-- fragment --><p> А если задан ненулевой параметр <b>read_size</b> в <b>btp_release_meter</b> то еще три: </p><div class="fragment"><div class="line">script~~script1~~service1~~server1~~op1:read</div>
+<div class="line">service~~service1~~server1~~op1:read</div>
+<div class="line">service~~service1~~op1:read</div>
+</div><!-- fragment --><p> При этом если <b>write_size==0</b>, а <b>read_size!=0</b> то метрики **:traff*** также будут созданы. Как видно, что если так делать как в предыдущей версии расширения то, потенциально, трафик может увеличиться в четыре раза (а на самом деле и более), но в данном решении:</b></p>
+<p><b></p><ul>
+<li>Первичная агрегация производится на клиенте</li>
+<li>JSON-объекты передаются в виде JSON-массивов (имена полей не передаются, но визуальная читабельность сохраняется)</li>
+<li>Специальным образом производится упаковка имен, т.е вместо <code>script~~script1~~service1~~server1~~op1:read</code> передаем <code>1~2~3~4~5</code>, а легенда в отдельном массиве <code>["script","script1","service1","server1","op1:read"]</code> для всех метрик в пакете, где очень много дублирующихся сущностей</li>
+<li>Метрики с размерами отправляем на отдельный сервер</li>
+</ul>
+<p></b></p>
+<p><b></b></p>
+<h2><a class="anchor" id="autotoc_md8"></a>
+btp_create_meter2</h2>
+<p><b></p><ul>
+<li><b>count</b> - количество операций (count на графиках) за измеряемый промежуток времени (Опционально, по умолчанию 1) <br  />
+</li>
+<li><b>write_size</b> - размер входных данных (в попугаях) либо размер json-запроса в байтах (Опционально, по умолчанию 0)</li>
+<li><b><dl class="section return"><dt>Возвращает</dt><dd>- возвращает идентификатор измерителя (таймера) Создает безымянный объект для измерения времени, имена задаються в <b>btp_release_meter2</b>. Работает аналогично <b>btp_create_meter</b>, но не принимает имена для метрики (они будут заданы <b>btp_release_meter2</b>)</dd></dl>
+</b></li>
+</ul>
+<p></b></p>
+<h2><a class="anchor" id="autotoc_md9"></a>
+btp_release_meter</h2>
+<p><b><b></p><ul>
+<li><b>id</b> - идентификатор измерителя, который был получен при создании <b>btp_create_meter</b> <br  />
+</li>
+<li><b>read_size</b> - размер выходных данных (в попугаях) либо размер json-ответа на запрос в байтах (Опционально, по умолчанию 0)</li>
+</ul>
+<p></b></b></p>
+<p><b><b>Завершает измерение временного интервала и записывает результат в соответствующие метрики. Данные не отправляются на сервер до вызова <b>btp_pushout</b>, а также могут быть специальным образом агрегированы.</b></b></p>
+<p><b><b></b></b></p>
+<h2><a class="anchor" id="autotoc_md10"></a>
+btp_release_meter2</h2>
+<p><b><b></p><ul>
+<li><b>id</b> - идентификатор измерителя, который был получен при создании <b>btp_create_meter2</b> <br  />
+</li>
+<li><b>script</b> - имя скрипта (может быть "" )</li>
+<li><b>service</b> - имя сервиса</li>
+<li><b>server</b> - имя сервера</li>
+<li><b>op</b> - операция</li>
+<li><b>read_size</b> - размер выходных данных (в попугаях) либо размер json-ответа на запрос в байтах (Опционально, по умолчанию 0)</li>
+</ul>
+<p></b></b></p>
+<p><b><b>Завершает измерение временного интервала, задает имена и записывает результат в соответствующие метрики. Данные не отправляются на сервер до вызова <b>btp_pushout</b>, а также могут быть специальным образом агрегированы. Работает аналогично <b>btp_release_meter</b>, но принимает имена для метрики, т.е. на момент вызова <b>btp_create_meter2</b> они еще небыли известны</b></b></p>
+<p><b><b></b></b></p>
+<h2><a class="anchor" id="autotoc_md11"></a>
+btp_pushout</h2>
+<p><b><b> Отправляет все данные на сервер одним или несколькими пакетами udp. Вызывается <b>автоматически</b> при завершении работы скрипта.</b></b></p>
+<p><b><b></b></b></p>
+<h2><a class="anchor" id="autotoc_md12"></a>
+btp_add_time, btp_add_size, btp_add_value</h2>
+<p><b><b></p><ul>
+<li><b>script</b> - имя скрипта (может быть "" )</li>
+<li><b>service</b> - имя сервиса</li>
+<li><b>server</b> - имя сервера</li>
+<li><b>op</b> - операция</li>
+<li><b>value</b> - интервал времени, размер или произвольное значение</li>
+<li><b>count</b> - количество операций (count на графиках) <br  />
+</li>
+</ul>
+<p></b></b></p>
+<p><b><b>Непосредственно записывают данные для метрики (не нужно вызывать btp_release_meter), побочные операции для размеров (типа op:write) не создаются. Используется во всех случаях когда нет необходимости измерять интервал и все данные для отправки в бтп уже готовы (наример текущая загруженность CPU или размер свободной памяти и пр. )</p><ul>
+<li><b>btp_add_time</b> - в параметре <b>value</b> нужно передавать интервал времени в микросекундах. Данные для основного сервера БТП</li>
+<li><b>btp_add_size</b> - в параметре <b>value</b> размер в попугаях. На графиках count - суммарный размер за интервал, в перцентилях - размеры в попугаях. Данные для размерного сервера БТП</li>
+<li><b>btp_add_value(не реализовано)</b> - аналогично <b>btp_add_size</b>, но параметр в <b>count</b> число операций (как и в обычных графиках) <br  />
+ </li>
+</ul>
+<p></b></b></p>
+</div></div><!-- contents -->
+</div><!-- PageDoc -->
+<!-- start footer part -->
+<hr class="footer"/><address class="footer"><small>
+Создано системой&#160;<a href="https://www.doxygen.org/index.html"><img class="footer" src="doxygen.svg" width="104" height="31" alt="doxygen"/></a> 1.9.1
+</small></address>
+</body>
+</html>
