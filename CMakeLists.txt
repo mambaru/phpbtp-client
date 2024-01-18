@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.10)
 
-project(phpbtp-client)
+project(phpbtp-client VERSION "0.9.8")
 
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 set(-Wzero-as-null-pointer-constant OFF)
@@ -10,6 +10,7 @@ if ( NOT BUILD_SHARED_LIBS )
 endif()
 
 include(cmake/ci.cmake)
+
 wci_submodule(NAME wrtstat SUPERMODULE)
 wci_submodule(NAME wlog)
 
@@ -68,3 +69,6 @@ if ( BUILD_TESTING )
   enable_testing()
   #add_subdirectory(tests)
 endif()
+
+#include(cmake/install.cmake)
+

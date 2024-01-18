@@ -33,7 +33,8 @@ endif
 #	one for each extension. Use this variable to specify this directory.
 #
 
-INI_DIR				=	/etc/php7/conf.d
+INI7_DIR				=	/etc/php7/conf.d
+INI8_DIR				=	/etc/php8/conf.d
 
 
 #
@@ -132,9 +133,11 @@ ${OBJECTS}:
 
 install:		
 						${CP} ${EXTENSION} ${EXTENSION_DIR}
-						${CP} ${INI} ${INI_DIR}
-						${CP} ${CONF} ${INI_DIR}
-				
+						${CP} ${INI} ${INI7_DIR}
+						${CP} ${CONF} ${INI7_DIR}
+						${CP} ${INI} ${INI8_DIR}
+						${CP} ${CONF} ${INI8_DIR}
+
 clean:
 						${RM} ${EXTENSION} ${OBJECTS}
 

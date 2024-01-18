@@ -1,7 +1,7 @@
 
 if ( NOT IS_WCI_PROJECT )
 
-  set(path "${PROJECT_SOURCE_DIR}")
+  set(path "${CMAKE_SOURCE_DIR}")
 
   if(NOT EXISTS ${path}/external/cmake-ci/cmake/target.cmake)
     execute_process(
