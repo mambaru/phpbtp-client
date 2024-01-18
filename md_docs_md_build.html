@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.9.1"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>btpd: Обновление 14.02.2023</title>
+<title>btpd: Сборка</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -40,44 +40,43 @@ $(function() {
 </div><!-- top -->
 <div class="PageDoc"><div class="header">
   <div class="headertitle">
-<div class="title">Обновление 14.02.2023 </div>  </div>
+<div class="title">Сборка </div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><ul>
-<li>В конфигурации <b>pushout_timer_s</b> переименован в <b>pushout_timer_ms</b>. Соответственно значение нужно указывать в миллисекундах</li>
-<li>Прерывание потока таймера при завершении работы</li>
-<li>Обновлен PHP-CPP до 2.3.5</li>
+<div class="textblock"><p>Требования для сборки:</p><ul>
+<li>g++ или clang++ (с поддержкой 17 стандарта)</li>
+<li>cmake (3.10)</li>
+<li>git</li>
+<li>php7 или php8</li>
 </ul>
-<h1><a class="anchor" id="autotoc_md14"></a>
+<div class="fragment"><div class="line">sudo apt install g++ cmake git</div>
+<div class="line">git clone https://github.com/mambaru/phpbtp-client.git</div>
+<div class="line">cd phpbtp-client</div>
+<div class="line">make release</div>
+</div><!-- fragment --><p>В процессе сборки будут автоматически подгружены необходимые модули Boost и PHP-CPP, а также подключены необходимые git-субмодули. Сам <code>phpbtp-client.so</code> будет собран в статике и не будет зависеть он сторонних <code>.so</code>. В случае успешной сборки в директории ./extension:</p>
+<div class="fragment"><div class="line">Makefile</div>
+<div class="line">phpbtp-client.conf</div>
+<div class="line">phpbtp-client.ini</div>
+<div class="line">phpbtp-client.so</div>
+<div class="line">test.php</div>
+</div><!-- fragment --><h1><a class="anchor" id="autotoc_md12"></a>
 Установка</h1>
-<p>Собранные расширения для Debian лежат в папке</p>
-<div class="fragment"><div class="line">repobuild4:/monamour/phpbtp-client/</div>
-</div><!-- fragment --><table class="markdownTable">
-<tr class="markdownTableHead">
-<th class="markdownTableHeadNone"></th><th class="markdownTableHeadNone"></th></tr>
-<tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">phpbtp-client-release.tar.gz   </td><td class="markdownTableBodyNone">Текущий релиз    </td></tr>
-<tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone">phpbtp-client-pre-release.tar.gz   </td><td class="markdownTableBodyNone">Предрелизная версия с отладочной информацией    </td></tr>
-<tr class="markdownTableRowOdd">
-<td class="markdownTableBodyNone">phpbtp-client-devel.tar.gz   </td><td class="markdownTableBodyNone">Рабочая версия для отладки    </td></tr>
-<tr class="markdownTableRowEven">
-<td class="markdownTableBodyNone">phpbtp-client-wip.tar.gz   </td><td class="markdownTableBodyNone">Текущая версия в разработке   </td></tr>
-</table>
-<p>Скачиваем и устанавливаем:</p>
-<div class="fragment"><div class="line">scp repobuild4:/monamour/phpbtp-client/phpbtp-client-release.tar.gz .</div>
-<div class="line">tar -xvf phpbtp-client-release.tar.gz</div>
+<div class="fragment"><div class="line">cd ./extension</div>
 <div class="line">sudo make install</div>
-</div><!-- fragment --><p>В архиве уже собранная либа phpbtp-client.so, make-файл просто копирует ее в директорию расширений php. Также копирует phpbtp-client.ini файл для php и JSON-конфигурацию phpbtp-client.conf в директорию /etc/php7/conf.d. Полный путь к файлу конфигурации нужно будет передать при вызове btp_configure. На данном этапе phpbtp-client.conf сконфигурирован на <code>Серевер:devel</code> (dd2: 192.168.2.13)</p>
-<p>Чтобы проверить: </p><div class="fragment"><div class="line">php test.php</div>
-<div class="line">sleep 1 </div>
-<div class="line">php test.php</div>
-</div><!-- fragment --><p> Чтобы данные появились на графиках нужно запустить пару раз (см. график phpservice1 на <code>Серевер:devel</code> в btp) и работает пока только 5-секундный график</p>
-<h2><a class="anchor" id="autotoc_md15"></a>
-Конфигурация</h2>
+</div><!-- fragment --><p>Это сработает только если PHP установлен по стандартным путям, в противном случае нужно в ручную скопировать <code>phpbtp-client.so</code> и <code>phpbtp-client.ini</code> в необходимые директории для расширений PHP.</p>
+<p>Для проверки работоспособности можно запустить:</p>
+<div class="fragment"><div class="line">php test.php</div>
+</div><!-- fragment --><p>Если не будет ошибок, значит расширенее установлено успешно. Данные отправляются по UDP, поэтому ошибок подключения к серверу btpd не будет. В конфигурации по умолчанию <code>phpbtp-client.conf</code> указан адресс <code>127.0.0.1</code>, а в примерах конфигурации <code>btpd</code> скорее всего <code>0.0.0.0</code>. Чтобы получить данные с тестовго скрипта в конфигурации расширения нужно изменить поля <code>addr</code> (или в конфигурации демона <code>addr</code> установить в <code>127.0.0.1</code>, если предполагается, что он будет работать локально).</p>
+<h1><a class="anchor" id="autotoc_md13"></a>
+Конфигурация</h1>
+<p>Подробное описание опций смотрите в комметариях файла конфигурации <code>phpbtp-client.conf</code>. Здесь отмечу пару не очевидных моментов.</p>
+<p>Демон <code>btpd</code> может работать по двум протоколам на разных портах. В примерах конфигураций которые с ним идут это порт <code>38001</code> для класического <code>JSON-RPC</code> и порт <code>38000</code> для так называемого <code>копактного JSON-RPC</code>, они не совместимы между собой. Расширение <code>phpbtp-client.so</code> может работать с тем или иным, в зависимости от конфигурации. Предоставляемый файл конфигурации работает с компактным вариантом. Опция <code>"json_compact": true</code> указывает то, что сообщения нужно отпаравлять в компактном варианте. Если нужен класический <code>JSON-RCP</code> то помимо установки <code>"json_compact": false</code> нужно также сменить порты на <code>38001</code>. В случе если ошибетесь с портами в логах <code>phpbtp-client.so</code> (по умолчанию отключены) ошибок вы не увидите, но вы эти ошибки увидите в логах демона <code>btpd</code></p>
+<p>Компактный <code>JSON-RPC</code> сериализует все структуры <code>params</code> в массивы <code>JSON</code> где каждый элемент массива соответствует полю структуры, уменьшая таким образом размер сериализованного <code>JSON</code>. Это очень не удобно если вы пытаетесь записать или анализировать компактный <code>JSON</code> в ручную, но на програмном уровне это очень похоже на бинарные протоколы, с той лишь разницей, что сохраняеться какая-никая читабельность. Библиотека <a href="https://github.com/mambaru/wjson">wjson</a> которая исползуеться для сериализации как в расширении <code>phpbtp-client</code>так и на демоне <code>btpd</code> не сильно уступает тому же <code>protobuf</code> в производительности по сериализации даже для классического <code>JSON</code>, но компактный вариант <code>JSON</code> может не уступать <code>protobuf</code>по размеру сериализованного сообщения и даже первосходить его частных случаях (например когда передаётся много <code>0</code>).</p>
+<h1><a class="anchor" id="autotoc_md14"></a>
+Конфигурация</h1>
 <p>Вся конфигурация в JSON-файле</p>
-<h2><a class="anchor" id="autotoc_md16"></a>
-Сборка</h2>
+<h1><a class="anchor" id="autotoc_md15"></a>
+Сборка</h1>
 <p>Для ручной сборки на repobuild4 или repobuild3: </p><div class="fragment"><div class="line">git clone git@gitlab.mamba.ru:cpp/phpbtp-client.git</div>
 <div class="line">cd phpbtp-client</div>
 <div class="line">BOOST_ROOT=/usr/monamour/boost/ make static</div>

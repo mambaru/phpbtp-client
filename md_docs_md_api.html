@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.9.1"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>btpd: phpbtp-client</title>
+<title>btpd: API</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -40,22 +40,16 @@ $(function() {
 </div><!-- top -->
 <div class="PageDoc"><div class="header">
   <div class="headertitle">
-<div class="title">phpbtp-client </div>  </div>
+<div class="title">API </div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><ul>
-<li><a href="http://github.lan/cpp/phpbtp-client">Ссылка на проект</a></li>
-<li>Сборка проекта</li>
-</ul>
-<h1><a class="anchor" id="autotoc_md5"></a>
-API</h1>
-<h2><a class="anchor" id="autotoc_md6"></a>
+<div class="textblock"><h2><a class="anchor" id="autotoc_md5"></a>
 btp_configure</h2>
 <ul>
 <li>path - полный путь к файлу конфигурации</li>
 </ul>
 <p>Создает и конфигурирует клиента к btp. Конфигурация в формате JSON. Эта функция должна быть вызвана первой.</p>
-<h2><a class="anchor" id="autotoc_md7"></a>
+<h2><a class="anchor" id="autotoc_md6"></a>
 btp_create_meter</h2>
 <ul>
 <li><b>script</b> - имя скрипта (может быть "" )</li>
@@ -97,7 +91,7 @@ btp_create_meter</h2>
 </ul>
 <p></b></p>
 <p><b></b></p>
-<h2><a class="anchor" id="autotoc_md8"></a>
+<h2><a class="anchor" id="autotoc_md7"></a>
 btp_create_meter2</h2>
 <p><b></p><ul>
 <li><b>count</b> - количество операций (count на графиках) за измеряемый промежуток времени (Опционально, по умолчанию 1) <br  />
@@ -107,7 +101,7 @@ btp_create_meter2</h2>
 </b></li>
 </ul>
 <p></b></p>
-<h2><a class="anchor" id="autotoc_md9"></a>
+<h2><a class="anchor" id="autotoc_md8"></a>
 btp_release_meter</h2>
 <p><b><b></p><ul>
 <li><b>id</b> - идентификатор измерителя, который был получен при создании <b>btp_create_meter</b> <br  />
@@ -117,7 +111,7 @@ btp_release_meter</h2>
 <p></b></b></p>
 <p><b><b>Завершает измерение временного интервала и записывает результат в соответствующие метрики. Данные не отправляются на сервер до вызова <b>btp_pushout</b>, а также могут быть специальным образом агрегированы.</b></b></p>
 <p><b><b></b></b></p>
-<h2><a class="anchor" id="autotoc_md10"></a>
+<h2><a class="anchor" id="autotoc_md9"></a>
 btp_release_meter2</h2>
 <p><b><b></p><ul>
 <li><b>id</b> - идентификатор измерителя, который был получен при создании <b>btp_create_meter2</b> <br  />
@@ -131,11 +125,11 @@ btp_release_meter2</h2>
 <p></b></b></p>
 <p><b><b>Завершает измерение временного интервала, задает имена и записывает результат в соответствующие метрики. Данные не отправляются на сервер до вызова <b>btp_pushout</b>, а также могут быть специальным образом агрегированы. Работает аналогично <b>btp_release_meter</b>, но принимает имена для метрики, т.е. на момент вызова <b>btp_create_meter2</b> они еще небыли известны</b></b></p>
 <p><b><b></b></b></p>
-<h2><a class="anchor" id="autotoc_md11"></a>
+<h2><a class="anchor" id="autotoc_md10"></a>
 btp_pushout</h2>
 <p><b><b> Отправляет все данные на сервер одним или несколькими пакетами udp. Вызывается <b>автоматически</b> при завершении работы скрипта.</b></b></p>
 <p><b><b></b></b></p>
-<h2><a class="anchor" id="autotoc_md12"></a>
+<h2><a class="anchor" id="autotoc_md11"></a>
 btp_add_time, btp_add_size, btp_add_value</h2>
 <p><b><b></p><ul>
 <li><b>script</b> - имя скрипта (может быть "" )</li>
@@ -150,8 +144,7 @@ btp_add_time, btp_add_size, btp_add_value</h2>
 <p><b><b>Непосредственно записывают данные для метрики (не нужно вызывать btp_release_meter), побочные операции для размеров (типа op:write) не создаются. Используется во всех случаях когда нет необходимости измерять интервал и все данные для отправки в бтп уже готовы (наример текущая загруженность CPU или размер свободной памяти и пр. )</p><ul>
 <li><b>btp_add_time</b> - в параметре <b>value</b> нужно передавать интервал времени в микросекундах. Данные для основного сервера БТП</li>
 <li><b>btp_add_size</b> - в параметре <b>value</b> размер в попугаях. На графиках count - суммарный размер за интервал, в перцентилях - размеры в попугаях. Данные для размерного сервера БТП</li>
-<li><b>btp_add_value(не реализовано)</b> - аналогично <b>btp_add_size</b>, но параметр в <b>count</b> число операций (как и в обычных графиках) <br  />
- </li>
+<li><b>btp_add_value</b> - аналогично <b>btp_add_size</b>, но параметр в <b>count</b> число операций (как и в обычных графиках) </li>
 </ul>
 <p></b></b></p>
 </div></div><!-- contents -->
