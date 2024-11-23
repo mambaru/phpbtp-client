@@ -16,7 +16,6 @@ wci_submodule(NAME wlog)
 
 add_custom_command(
   COMMAND git clone -q -b v2.4.1 https://github.com/CopernicaMarketingSoftware/PHP-CPP.git
-  #COMMAND git clone -b v3.0.0 https://github.com/fast-debug/PHP-CPP.git
   WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
   OUTPUT PHP-CPP
 )
@@ -31,7 +30,7 @@ add_custom_command(
   COMMAND INSTALL_PREFIX="${CMAKE_BINARY_DIR}/PHP-CPP" make install
   WORKING_DIRECTORY ${CMAKE_BINARY_DIR}/PHP-CPP
   DEPENDS PHP-CPP
-  OUTPUT libphpcpp.a
+  OUTPUT libphpcpp.a.2.4.1
 )
 
 #wci_remove_options(-Wzero-as-null-pointer-constant)
@@ -42,7 +41,7 @@ add_custom_command(
   COMMAND BLDDIR=${CMAKE_BINARY_DIR} make clean
   COMMAND BLDDIR=${CMAKE_BINARY_DIR} make
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/extension/
-  DEPENDS btpclient libphpcpp.a
+  DEPENDS btpclient libphpcpp.a.2.4.1
   OUTPUT phpbtp-client.so
 )
 

@@ -93,7 +93,7 @@ LINKER				=	g++
 
 COMPILER_FLAGS		=	-I../libbtpclient -I${BLDDIR}/PHP-CPP/include -c -O2 -DNDEBUG -std=c++11 -fpic -o
 LINKER_FLAGS		=	-shared
-LINKER_DEPENDENCIES	=	${BLDDIR}/PHP-CPP/libphpcpp.a* ${BLDDIR}/archive/libbtpclient.a ${BLDDIR}/archive/libwrtstat.a ${BLDDIR}/archive/libwlog.a
+LINKER_DEPENDENCIES	=	${BLDDIR}/PHP-CPP/libphpcpp.a.2.4.1 ${BLDDIR}/archive/libbtpclient.a ${BLDDIR}/archive/libwrtstat.a ${BLDDIR}/archive/libwlog.a
 
 #
 #	Command to remove files, copy files and create directories.
