@@ -1,5 +1,5 @@
 #include "btpgateway.hpp"
-#include "udpclient.hpp"
+#include "net/ipclient.hpp"
 #include "logger.hpp"
 #include <wrtstat/api/push_json.hpp>
 #include <wrtstat/api/push_json_compact.hpp>
@@ -74,7 +74,7 @@ namespace
 btpgateway::btpgateway(bool json_compact, const btpgateway_options& opt)
  : _json_compact(json_compact)
  , _opt(opt)
- , _client(std::make_shared<udpclient>())
+ , _client(std::make_shared<ipclient>())
 {
   _client->connect(_opt);
 }
@@ -85,8 +85,8 @@ void btpgateway::push(wrtstat::request::push::ptr req, wrtstat::response::push::
   static const std::string pref_ntf = "{'method':'push','params':"_json;
   static const std::string pref_req = "{'id':1,'method':'push','params':"_json;
   auto json_req = handler == nullptr
-    ? std::make_unique<udpclient::data_type>( std::begin(pref_ntf), std::end(pref_ntf) )
-    : std::make_unique<udpclient::data_type>( std::begin(pref_req), std::end(pref_req) );
+    ? std::make_unique<data_type>( std::begin(pref_ntf), std::end(pref_ntf) )
+    : std::make_unique<data_type>( std::begin(pref_req), std::end(pref_req) );
   
   if ( _json_compact )
     wrtstat::request::push_json_compact::serializer()(*req, std::back_inserter(*json_req) );
@@ -103,7 +103,7 @@ void btpgateway::push(wrtstat::request::push::ptr req, wrtstat::response::push::
   else
   {
     bool compact = _json_compact;
-    _client->send(std::move(json_req), [compact, handler](udpclient::data_ptr json_res){
+    _client->send(std::move(json_req), [compact, handler](data_ptr json_res){
       if ( json_res == nullptr )
       {
         handler(nullptr);
@@ -143,8 +143,8 @@ void btpgateway::multi_push(wrtstat::request::multi_push::ptr req, wrtstat::resp
   static const std::string pref_ntf = "{'method':'multi_push','params':"_json;
   static const std::string pref_req = "{'id':1,'method':'multi_push','params':"_json;
   auto json_req = handler == nullptr
-    ? std::make_unique<udpclient::data_type>( std::begin(pref_ntf), std::end(pref_ntf) )
-    : std::make_unique<udpclient::data_type>( std::begin(pref_req), std::end(pref_req) );
+    ? std::make_unique<data_type>( std::begin(pref_ntf), std::end(pref_ntf) )
+    : std::make_unique<data_type>( std::begin(pref_req), std::end(pref_req) );
   
   if ( _json_compact )
     wrtstat::request::multi_push_json_compact::serializer()(*req, std::back_inserter(*json_req) );
@@ -162,7 +162,7 @@ void btpgateway::multi_push(wrtstat::request::multi_push::ptr req, wrtstat::resp
   else
   {
     bool compact = _json_compact;
-    _client->send(std::move(json_req), [compact, handler](udpclient::data_ptr json_res){
+    _client->send(std::move(json_req), [compact, handler](data_ptr json_res){
       if ( json_res == nullptr )
       {
         handler(nullptr);

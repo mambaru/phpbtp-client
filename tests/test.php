@@ -1,6 +1,6 @@
 <?php
 // while :; do php ./test.php; done
-btp_configure('../extension/phpbtp-client.conf');
+btp_configure('./phpbtp-client.conf');
 $btpMeter = btp_create_meter('test2.php', 'my_service_single_run', 'server134', 'test13434', 1);
 print "$btpMeter\n";
 usleep(2000000);

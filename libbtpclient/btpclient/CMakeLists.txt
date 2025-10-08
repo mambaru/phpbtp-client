@@ -4,7 +4,9 @@ include(FindThreads REQUIRED)
 
 add_library(
   btpclient
-    udpclient.cpp
+    net/ipclient.cpp
+    net/udpclient.cpp
+    net/tcpclient.cpp
     btpgateway.cpp
     btpclient.cpp
     btpsharding.cpp

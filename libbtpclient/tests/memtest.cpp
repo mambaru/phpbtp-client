@@ -1,5 +1,5 @@
 #include <fas/testing.hpp>
-#include <btpclient/udpclient.hpp>
+#include <btpclient/net/udpclient.hpp>
 #include <btpclient/btpgateway.hpp>
 #include <btpclient/btpclient.hpp>
 #include <btpclient/btpsharding.hpp>
@@ -86,13 +86,13 @@ int main(int, char**)
   opt.shards[0].packer.json_compact = true;
   opt.shards[0].stat.resolution = resolutions::milliseconds;
   opt.shards[0].stat.aggregation_step_ts = 500;
-  opt.shards[0].time_client.addr = "0.0.0.0";
-  opt.shards[0].size_client.addr = "0.0.0.0";
-  opt.shards[0].time_client.test = [](wamba::btp::udpclient_options::data_ptr d)
+  opt.shards[0].time_client.udp.addr = "0.0.0.0";
+  opt.shards[0].size_client.udp.addr = "0.0.0.0";
+  opt.shards[0].time_client.udp.test = [](wamba::btp::data_ptr d)
   {
     std::cout << std::string( d->begin(), d->end() ) << std::endl;
   };
-  opt.shards[0].size_client.test = opt.shards[0].time_client.test;
+  opt.shards[0].size_client.udp.test = opt.shards[0].time_client.udp.test;
 
   for (int k=0; k < 3; ++k)
   {

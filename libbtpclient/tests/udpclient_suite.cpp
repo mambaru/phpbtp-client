@@ -1,5 +1,5 @@
 #include <fas/testing.hpp>
-#include <btpclient/udpclient.hpp>
+#include <btpclient/net/ipclient.hpp>
 #include <btpclient/btpgateway.hpp>
 #include <btpclient/btpclient.hpp>
 #include <btpclient/btpsharding.hpp>
@@ -18,10 +18,10 @@ UNIT(udpclient1, "")
   using namespace wamba::btp;
   using namespace wjson::literals;
 
-  udpclient_options opt;
-  opt.addr = addr;
-  opt.port = "38001";
-  udpclient cli;
+  ipclient_options opt;
+  opt.udp.addr = addr;
+  opt.udp.port = "38001";
+  ipclient cli;
   t << is_true<expect>( cli.connect(opt) ) << FAS_FL;
   
   std::string json="{'method':'push','id':1,'params':{'name':'service~~name1~~name2~~name3','data':[1,2,3,4,5]}}\r\n"_json;
@@ -30,7 +30,7 @@ UNIT(udpclient1, "")
   
   for(size_t i=0; i < COUNT; ++i)
   {
-    cli.send( std::make_unique< udpclient::data_type>(json.begin(), json.end()), nullptr);
+    cli.send( std::make_unique< data_type>(json.begin(), json.end()), nullptr);
     t << message("poll... ") << i;
     t << flush;
     std::this_thread::sleep_for(std::chrono::milliseconds(20));
@@ -47,8 +47,8 @@ UNIT(btpgateway1, "")
   using namespace wjson::literals;
 
   btpgateway_options opt;
-  opt.addr = addr;
-  opt.port = "38001";
+  opt.udp.addr = addr;
+  opt.udp.port = "38001";
   btpgateway cli(false, opt);
   for(size_t i=0; i < COUNT; ++i)
   {
@@ -69,10 +69,10 @@ UNIT(btpclient1, "")
   using namespace wjson::literals;
 
   btpclient_options opt;
-  opt.time_client.addr = addr;
-  opt.time_client.port = "38001";
-  opt.size_client.addr = addr;
-  opt.size_client.port = "38001";
+  opt.time_client.udp.addr = addr;
+  opt.time_client.udp.port = "38001";
+  opt.size_client.udp.addr = addr;
+  opt.size_client.udp.port = "38001";
   opt.stat.aggregation_step_ts = 1000000;
   opt.stat.resolution = resolutions::microseconds;
   opt.packer.json_limit=1024;
@@ -108,14 +108,14 @@ UNIT(btpsharding1, "")
   using namespace wjson::literals;
   
   btpshard_options opt;
-  opt.time_client.addr = addr;
-  opt.time_client.port = "38001";
-  opt.size_client.addr = addr;
-  opt.size_client.port = "38001";
+  opt.time_client.udp.addr = addr;
+  opt.time_client.udp.port = "38001";
+  opt.size_client.udp.addr = addr;
+  opt.size_client.udp.port = "38001";
   opt.stat.aggregation_step_ts = 1000000;
   opt.stat.resolution = resolutions::microseconds;
   opt.packer.json_limit=1024;
-  opt.time_client.test = [&t](udpclient_options::data_ptr d)
+  opt.time_client.udp.test = [&t]( wamba::btp::data_ptr d)
   {
     t << message("TIME TEST:") << std::string( d->begin(), d->end() ) << FAS_FL;
   };
@@ -187,14 +187,14 @@ UNIT(btpsharding2, "")
   using namespace wjson::literals;
   
   btpshard_options opt;
-  opt.time_client.addr = addr;
-  opt.time_client.port = "38001";
-  opt.size_client.addr = addr;
-  opt.size_client.port = "38001";
+  opt.time_client.udp.addr = addr;
+  opt.time_client.udp.port = "38001";
+  opt.size_client.udp.addr = addr;
+  opt.size_client.udp.port = "38001";
   opt.stat.aggregation_step_ts = 1000000;
   opt.stat.resolution = resolutions::microseconds;
   opt.packer.json_limit=1024;
-  opt.time_client.test = [&t](udpclient_options::data_ptr d)
+  opt.time_client.udp.test = [&t](wamba::btp::data_ptr d)
   {
     t << message("TIME TEST:") << std::string( d->begin(), d->end() ) << FAS_FL;
   };
@@ -270,10 +270,10 @@ UNIT(btpsharding_timer, "")
 
   {
     btpshard_options opt;
-    opt.time_client.addr = addr;
-    opt.time_client.port = "38001";
-    opt.size_client.addr = addr;
-    opt.size_client.port = "38001";
+    opt.time_client.udp.addr = addr;
+    opt.time_client.udp.port = "38001";
+    opt.size_client.udp.addr = addr;
+    opt.size_client.udp.port = "38001";
 
     btpsharding_options opts;
     opts.pushout_timer_ms=5000;

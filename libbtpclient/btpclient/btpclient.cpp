@@ -102,8 +102,9 @@ id_t stat_points_maps::create_meter(
 
 stat_points_maps::multi_push_ptr stat_points_maps::release_meter(id_t id, size_t read_size/*, bool force_pushout*/ )
 {
+  stat_points_maps::multi_push_ptr req;
   if ( _limit == 0 )
-    return nullptr;
+    return req;
 
   auto id_itr = std::lower_bound(_id_list.begin(), _id_list.end(), id, std::less<id_t>() );
   if ( id_itr != _id_list.end() && *id_itr == id)
@@ -112,7 +113,7 @@ stat_points_maps::multi_push_ptr stat_points_maps::release_meter(id_t id, size_t
   auto itr = _composite.find(id);
   if (itr == _composite.end() )
   {
-    return nullptr;
+    return req;
   }
   itr->second.set_read_size( static_cast<wrtstat::value_type>(read_size));
 
@@ -120,9 +121,9 @@ stat_points_maps::multi_push_ptr stat_points_maps::release_meter(id_t id, size_t
 
   auto push_itr = _push_map.find(id);
   if (push_itr == _push_map.end() )
-    return nullptr;
+    return req;
 
-  auto req = push_itr->second;
+  req = push_itr->second;
   _push_map.erase(push_itr);
   return req;
 }

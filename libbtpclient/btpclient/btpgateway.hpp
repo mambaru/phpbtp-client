@@ -6,7 +6,7 @@
 
 namespace wamba{ namespace btp{
   
-class udpclient;
+class ipclient;
 
 class btpgateway
 {
@@ -17,7 +17,7 @@ public:
 private:
   bool _json_compact = false;
   btpgateway_options _opt;
-  std::shared_ptr<udpclient> _client;
+  std::shared_ptr<ipclient> _client;
 };
   
 }}
